@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 20 2022-02-15 00:40:33Z stro $
+// $Id: AnnealerCase.scad 22 2022-02-15 04:40:55Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -338,6 +338,8 @@ drop_total_length = 200.0; // How far is the collator from the feeder
 
 cf_magnet_cover_height = 1.2; // How much material should be over/under the magnet
 cf_magnet_cover_radius = 1.0; // Around the magnet
+
+cf_magnet_holder_cover_radius = 10.0; // around the magnet on the insert holder
 
 drop_funnel_magnet_offset = tube_diameter / 2 + cf_magnet_diameter / 2 + cf_magnet_bottom_ext / 2 + cf_magnet_cover_radius;
 
@@ -698,7 +700,7 @@ module front_wall_left_embossed () {
         hull () {
           for (xy = ch_mounts) {
             translate([xy[0], xy[1], - case_thickness / 2])
-              cylinder(h = case_thickness, d = cf_magnet_diameter + cf_magnet_cover_radius, center = true);  
+              cylinder(h = case_thickness, d = cf_magnet_diameter + cf_magnet_holder_cover_radius, center = true);  
           }
         }
 
@@ -712,7 +714,7 @@ module front_wall_left_embossed () {
       translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
             translate([ch_mounts[0][0], ch_mounts[0][1], - case_thickness / 2])
-              cylinder(h = case_thickness, d = cf_magnet_diameter + cf_magnet_cover_radius, center = true);  
+              cylinder(h = case_thickness, d = cf_magnet_diameter + cf_magnet_holder_cover_radius, center = true);  
     }
   }
 }
