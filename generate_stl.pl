@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: generate_stl.pl 21 2022-02-15 00:46:43Z stro $
+# $Id: generate_stl.pl 23 2022-02-16 02:37:21Z stro $
 
 use strict;
 use warnings;
@@ -15,9 +15,10 @@ use Getopt::Long qw/:config auto_help/;
 use open qw/:std :utf8/;
 binmode(STDOUT, ":utf8");
 
-my $force;
+my ($force, $verbose);
 GetOptions(
     'force' => \$force,
+    'verbose' => \$verbose,
 );
 
 =head1 SYNOPSIS
@@ -43,7 +44,7 @@ if (open my $F_IN, '<', $main_filename) {
   while (my $line = <$F_IN>) {
     if ($line =~ m!^module\s+(print_\w+).*?//\s+name:\s+(.*?\.stl)!x) {
       my ($module, $stl) = ($1, $2);
-      say sprintf('Module %s generates %s', $module, $stl);
+      say sprintf('Module %s generates %s', $module, $stl) if $verbose;
       $modules{$module} = $stl;
     }
   }
@@ -77,20 +78,24 @@ if (open my $F_IN, '<', $main_filename) {
       }
     }
     close $F_OUT;
-    say sprintf('Generated file %s', $temp_filename);
+
+    say sprintf('Generated file %s', $temp_filename) if $verbose;
 
     foreach my $module (@modules_simple) {
       my $stl = $modules{$module};
-      say sprintf('Generate %s from %s', $stl, $module);  
 
       my $filename = File::Spec->catfile('renders' => $stl);
       if (-e $filename and not $force) {
-        say sprintf('  File %s exists, skipping', $filename);
+        say sprintf('File %s for %s exists, skipping', $filename, $module) if $verbose;
         next;
       }
-      
+
+      say sprintf('Generate %s from %s', $stl, $module);  
+
       my @cmd = ($openscad, '-o', $filename, '-D', sprintf('"print=\"%s\""', $module), $temp_filename);
+      my $time = time;
       system(@cmd);
+      say sprintf('  Generated in %d seconds', time - $time);
     }
 
     foreach my $module (@modules_cal) {
@@ -100,16 +105,19 @@ if (open my $F_IN, '<', $main_filename) {
         $cal =~ s!\.!!msgx;
         $cal =~ s!\N{U+00D7}!x!msgx;
         my $stl = sprintf($modules{$module}, $cal);
-        say sprintf('Generate %s from %s; caliber %s', $stl, $module, $caliber);
 
         my $filename = File::Spec->catfile('renders' => 'caliber-specific' => $stl);
         if (-e $filename and not $force) {
-          say sprintf('  File %s exists, skipping', $filename);
+          say sprintf('File %s for %s; caliber %s exists, skipping', $filename, $module, $caliber) if $verbose;
           next;
         }
+
+        say sprintf('Generate %s from %s; caliber %s', $stl, $module, $caliber);
         
         my @cmd = ($openscad, '-o', $filename, '-D', sprintf('"print=\"%s\""', $module), '-D', sprintf('"caliber=\"%s\""', $caliber), $temp_filename);
+        my $time = time;
         system(@cmd);
+        say sprintf('  Generated in %d seconds', time - $time);
       }
     }
 
