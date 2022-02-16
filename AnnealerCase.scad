@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 22 2022-02-15 04:40:55Z stro $
+// $Id: AnnealerCase.scad 23 2022-02-16 02:37:21Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -24,7 +24,10 @@
 use <./CaliberInfo.scad>;
 use <contrib/Anton-Regular.ttf>
 
-insert_mount_enabled = true;
+front_insert_mount_enabled = false;
+top_insert_mount_enabled = true;
+top_funnel_mounts_enabled = true;
+top_funnel_mounts_number = 7;
 
 case_x = 250;
 case_y = 200;
@@ -170,6 +173,7 @@ pump_hole_y = 42.0;
 
 insert_mount_x_offset = 0;
 insert_mount_y_offset = 50;
+insert_mount_y_offset_top = 60;
 insert_mount_z_offset = 30;
 insert_mount_z_rib = 5;
 
@@ -200,6 +204,9 @@ zvs_sensor_space = 2.0;
 zvs_sensor_diff = 13.4 + zvs_sensor_width;
 zvs_sensor_offset = -20.0; // to the front
 
+top_funnel_mount_x_offset = 20;
+top_funnel_mount_y_offset = 0;
+top_funnel_mount_y_diff = 20;
 
 top_mount_x_diff_front = 85.0;
 top_mount_y_diff_front = 20.0;
@@ -536,6 +543,23 @@ module top_wall_engraved () {
   translate([case_x - case_thickness - pump_hole_x, case_y - case_thickness - pump_hole_y, case_z])
     cylinder(h = 2 * case_thickness, d = pump_hole_diameter, center = true);
 
+
+  if (top_insert_mount_enabled) {
+    translate([case_thickness + front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset_top, case_z])
+      rotate([0, 0, 180])
+        ch_mount_magnet_holes();
+  }
+
+  if (top_funnel_mounts_enabled) {
+    for(y = [1 : top_funnel_mounts_number]) {
+      translate([case_x - case_thickness - top_funnel_mount_x_offset - drop_funnel_magnet_offset, top_funnel_mount_y_diff * y + top_funnel_mount_y_offset, case_z])
+        for (x = [ - drop_funnel_magnet_offset, drop_funnel_magnet_offset]) {
+          translate([x, 0, - cf_magnet_height / 2])
+            cylinder(h = cf_magnet_height, d = cf_magnet_diameter, center = true);
+      }
+    }
+  }
+
   zvs_mount_engraved();
   zvs_mount_embossed();
     
@@ -694,7 +718,7 @@ module front_wall_left_embossed () {
   translate([0, 0, 0])
     cube([front_wall_part_width, case_thickness, case_z]);
 
-  if (insert_mount_enabled) {
+  if (front_insert_mount_enabled) {
     translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
         hull () {
@@ -732,7 +756,7 @@ module front_wall_left_engraved () {
   translate([0, 0, case_z - ab_height - 2 * case_thickness])
     front_assembly_blocks_engraved();
 
-  if (insert_mount_enabled) {
+  if (front_insert_mount_enabled) {
     translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
         ch_mount_magnet_holes();
