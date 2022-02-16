@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: generate_stl.pl 23 2022-02-16 02:37:21Z stro $
+# $Id: generate_stl.pl 24 2022-02-16 02:48:32Z stro $
 
 use strict;
 use warnings;
@@ -13,19 +13,22 @@ use File::Temp;
 use Getopt::Long qw/:config auto_help/;
 
 use open qw/:std :utf8/;
-binmode(STDOUT, ":utf8");
+binmode(STDOUT, ':encoding(UTF-8)');
 
-my ($force, $verbose);
+my ($force, $verbose, $release);
 GetOptions(
     'force' => \$force,
     'verbose' => \$verbose,
+    'release' => \$release,
 );
 
 =head1 SYNOPSIS
 
-  Usage: generate_stl.pl [--force]
+  Usage: generate_stl.pl [--force] [--verbose] [--release]
 
     --force parameter overwrites existing files
+    --verbose parameter produces more output
+    --release creates a zip file with all stl files based on the last tag
 
 =cut
 
@@ -90,7 +93,7 @@ if (open my $F_IN, '<', $main_filename) {
         next;
       }
 
-      say sprintf('Generate %s from %s', $stl, $module);  
+      say sprintf('Generate %s from %s', $stl, $module);
 
       my @cmd = ($openscad, '-o', $filename, '-D', sprintf('"print=\"%s\""', $module), $temp_filename);
       my $time = time;
@@ -122,6 +125,15 @@ if (open my $F_IN, '<', $main_filename) {
     }
 
     unlink $temp_filename;
+
+    if ($release) {
+      my $tag = `git describe`;
+      chomp $tag;
+      say sprintf('Creating release file for version %s', $tag);
+      chdir 'renders';
+      system(sprintf('zip -9r Annealer-%s.zip *.stl caliber-specific/*.stl', $tag));
+      chdir '..';
+    }
   } else {
     die sprintf('Cannot read file %s: %s', $cal_filename, $OS_ERROR);
   }
