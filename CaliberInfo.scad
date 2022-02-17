@@ -1,5 +1,4 @@
-// $Id: CaliberInfo.scad 16 2022-02-14 05:31:06Z stro $
-
+// $Id: CaliberInfo.scad 25 2022-02-17 21:56:18Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -23,19 +22,24 @@
  */
 
 function caliber_data ( cal ) = 
-  // First number: case diameter at the widest (mm)
-  // Second number: case length (mm)
+  // First number: case diameter at the widest (mm), rounded up
+  // Second number: case length (mm), rounded down
+  // Third number: distance to the neck (mm)
      
-  cal == ".223 Remington"         ? [10.0, 44 ] :
-  cal == ".300 AAC Blackout"      ? [10.0, 34 ] :
-  cal == ".30-30 Winchester"      ? [14.0, 51 ] :
-  cal == ".308 Winchester"        ? [13.0, 50 ] :
-  cal == ".30-06 Springfield"     ? [13.0, 62 ] :
-  cal == ".303 British"           ? [15.0, 55 ] :
-  cal == "7.62×54mmR"             ? [15.0, 52 ] :
-  cal == "8×57mm"                 ? [13.0, 55 ] :
-  cal == ".338 Lapua Magnum"      ? [15.0, 69 ] :
+  cal == ".223 Remington"         ? [10.0, 44.0,  8.4 ] :
+  cal == ".243 Winchester"        ? [13.0, 51.0, 12.7 ] :
+  cal == ".270 Winchester"        ? [13.0, 62.0, 14.7 ] :
+  cal == ".30 Herrett"            ? [14.0, 41.0,  9.4 ] :
+  cal == ".300 AAC Blackout"      ? [10.0, 34.0,  6.5 ] :
+  cal == ".30-30 Winchester"      ? [14.0, 52.0, 14.5 ] :
+  cal == ".308 Winchester"        ? [13.0, 51.0, 11.2 ] :
+  cal == ".30-06 Springfield"     ? [13.0, 62.0, 13.2 ] :
+  cal == ".303 British"           ? [15.0, 55.0, 10.0 ] :
+  cal == "7-30 Waters"            ? [14.0, 52.0, 11.4 ] :
+  cal == "7.62×54mmR"             ? [15.0, 52.0, 13.7 ] :
+  cal == "8×57mm"                 ? [13.0, 55.0, 10.8 ] :
+  cal == ".338 Lapua Magnum"      ? [15.0, 69.0, 14.3 ] :
     
-  cal == ""                       ? [0, 0] :
+  cal == ""                       ? [0, 0, 0] :
 
   assert(false, str("No caliber defined: ", cal)); 

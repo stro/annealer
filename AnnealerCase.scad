@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 23 2022-02-16 02:37:21Z stro $
+// $Id: AnnealerCase.scad 25 2022-02-17 21:56:18Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -379,7 +379,7 @@ ch_top_thickness = 5.0;
 ch_top_width = 50.0;
 ch_top_depth = 80.0;
 
-ch_insert_diff = 10.0;
+ch_insert_diff = 5.0;
 ch_bottom_slope = 2.0;
 
 ch_mounts = [[0, -18.5], [-18.5, 33.5], [18.5, 18.0]];
@@ -489,6 +489,7 @@ nema_insert_extra_height = 5.0;
 m2_5_diameter = 2.6;
 
 ch_case_difference = servo_mount_top_clearance + ch_top_thickness + coil_height / 2 + ch_insert_diff;
+
 
 button_caption = ["START", "MODE", "TIME"]; // from bottom to top
 
@@ -2347,8 +2348,8 @@ module case_holder_insert ( caliber ) {
  
   translate([cf_center_x, cf_center_y, ch_top_z - ch_top_thickness])
     difference () {
-      case_holder_insert_embossed(width_data[0], width_data[1] - ch_case_difference, caliber);
-      case_holder_insert_engraved(width_data[0], width_data[1] - ch_case_difference, caliber);
+      case_holder_insert_embossed(width_data[0], width_data[1] - ch_case_difference - width_data[2], caliber);
+      case_holder_insert_engraved(width_data[0], width_data[1] - ch_case_difference - width_data[2], caliber);
     }
 }
 
