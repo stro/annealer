@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 27 2022-02-18 01:37:46Z stro $
+// $Id: AnnealerCase.scad 29 2022-02-18 20:57:49Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1466,7 +1466,7 @@ module case_holder_top_engraved () {
       translate([0, 0, ch_top_thickness / 2])
         cylinder(h = ch_top_thickness, d2 = cf_drop_diameter + ch_drop_slope, d1 = cf_drop_diameter, center = true);
       translate([0, 0, (cf_magnet_height + cf_magnet_bottom_height_ext) ])
-        ch_mount_magnet_holes(diameter = cf_magnet_diameter + cf_magnet_bottom_ext, height = cf_magnet_height + cf_magnet_bottom_height_ext);
+        ch_mount_magnet_holes(diameter = cf_magnet_diameter + cf_magnet_bottom_ext, height = cf_magnet_height + 2 * cf_magnet_bottom_height_ext);
 
       // A hole for servo arm screw
       translate([0, servo_arm_length, (cf_magnet_height + cf_magnet_bottom_height_ext) / 2])
