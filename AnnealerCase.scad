@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 25 2022-02-17 21:56:18Z stro $
+// $Id: AnnealerCase.scad 26 2022-02-18 00:55:37Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -154,7 +154,7 @@ radiator_z_center = radiator_z_offset + radiator_diameter / 2;
 
 pump_width = 56.4;
 pump_depth = 65.0;
-pump_height = 85.0;
+pump_height = 82.0;
 pump_x_offset = 2.0;
 pump_y1 = 10.2;
 pump_y2 = pump_y1 + 45.2;
@@ -166,10 +166,8 @@ pump_holder_slope_x = pump_width;
 pump_holder_slope_z = 2.0;
 
 pump_hole_diameter = 23.0;
-//pump_hole_x = 34.0;
-//pump_hole_y = 42.8;
 pump_hole_x = 31.0;
-pump_hole_y = 42.0;
+pump_hole_y = 43.0;
 
 insert_mount_x_offset = 0;
 insert_mount_y_offset = 50;
