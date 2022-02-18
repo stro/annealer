@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: generate_stl.pl 24 2022-02-16 02:48:32Z stro $
+# $Id: generate_stl.pl 27 2022-02-18 01:37:46Z stro $
 
 use strict;
 use warnings;
@@ -125,6 +125,22 @@ if (open my $F_IN, '<', $main_filename) {
     }
 
     unlink $temp_filename;
+
+    { # coil guide
+      my $filename = File::Spec->catfile('renders' => 'CoilGuide.stl');
+      if (-e $filename and not $force) {
+        say sprintf('File %s for coil guide exists, skipping', $filename) if $verbose;
+        next;
+      }
+
+      say 'Generate CoilGuide.stl';
+
+      my @cmd = ($openscad, '-o', $filename, 'CoilGuide.scad');
+      my $time = time;
+      system(@cmd);
+      say sprintf('  Generated in %d seconds', time - $time);
+
+    }
 
     if ($release) {
       my $tag = `git describe`;

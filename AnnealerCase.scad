@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 26 2022-02-18 00:55:37Z stro $
+// $Id: AnnealerCase.scad 27 2022-02-18 01:37:46Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -189,7 +189,7 @@ zvs_z_diff = 74.4;
 zvs_mount_thickness = 5.0;
 zvs_mount_x_offset = 135.0;
 zvs_mount_y_offset = 0.0;
-zvs_mount_z_offset = 40.0;
+zvs_mount_z_offset = 50.0;
 zvs_mount_extra_ab_offset = 30.0; // Needs to be below the case holder
 
 zvs_front_mount_z_offset = 100.0;
@@ -363,7 +363,7 @@ drop_funnel_side_magnet_height = 120;
 
 collator_drop_tube_adjustment = -57; // Probably can be calculated
 
-ch_top_z = 121.0;
+ch_top_z = 131.0;
 
 ch_drop_slope = 10.0;
 
