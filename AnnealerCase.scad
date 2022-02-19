@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 30 2022-02-19 00:44:22Z stro $
+// $Id: AnnealerCase.scad 32 2022-02-19 02:35:34Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1568,8 +1568,13 @@ module servo_holder_engraved () {
           }
         };
 
-        translate([0, 0, servo_mount_top_clearance ])
-          ch_mount_magnet_holes();
+      // Top magnets
+      translate([0, 0, servo_mount_top_clearance ])
+        ch_mount_magnet_holes();
+
+      // Bottom magnets
+      translate([0, 0, - servo_mount_height - servo_arm_thickness - servo_hole_height + cf_magnet_height])
+        ch_mount_magnet_holes();
     }
 }
 
