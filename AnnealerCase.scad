@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 29 2022-02-18 20:57:49Z stro $
+// $Id: AnnealerCase.scad 30 2022-02-19 00:44:22Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -191,7 +191,7 @@ zvs_mount_x_offset = 135.0;
 zvs_mount_y_offset = 0.0;
 zvs_mount_z_offset = 50.0;
 zvs_mount_extra_ab_offset = 30.0; // Needs to be below the case holder
-
+zvs_mount_extra_z_hole = 30.0; // Hole above the top mounts; saves a little bit of filament
 zvs_front_mount_z_offset = 100.0;
 
 zvs_holder_diameter = ab_width;
@@ -1018,7 +1018,7 @@ module zvs_mount_embossed () {
   translate([case_thickness + zvs_mount_x_offset - ab_width / 2, case_thickness, case_z - case_thickness - zvs_front_mount_z_offset - ab_height - zvs_mount_extra_ab_offset])
     cube([ab_width, ab_depth, ab_height]);
 
-  // Connecting the block
+  // Connecting block
   translate([case_thickness + zvs_mount_x_offset + zvs_mount_thickness, case_thickness, case_z - case_thickness - zvs_front_mount_z_offset - ab_height - zvs_mount_extra_ab_offset])
     cube([zvs_mount_thickness, ab_depth, ab_height + zvs_mount_extra_ab_offset]);
 }
@@ -1065,7 +1065,7 @@ module zvs_mount_engraved () {
     
   // Central hole
   translate([case_thickness + zvs_mount_x_offset, case_thickness + zvs_mount_y_offset + zvs_mount_thickness + zvs_holder_diameter / 2, case_z - case_thickness - zvs_mount_z_offset - zvs_z_diff + zvs_mount_thickness])
-    cube([zvs_mount_thickness * 4, zvs_y_diff - 2 * zvs_mount_thickness, zvs_z_diff - 2 * zvs_mount_thickness]);    
+    cube([zvs_mount_thickness * 4, zvs_y_diff - 2 * zvs_mount_thickness, zvs_z_diff - 2 * zvs_mount_thickness + zvs_mount_extra_z_hole]);
 }
 
 // ZVS SENSOR
@@ -2835,21 +2835,22 @@ module vq () {
 
 // Case walls
 module print_top_wall () { // name: CaseTop.stl
-  rotate([180, 0, 0])
+  rotate([180, 0, 90])
     top_wall();
 }
 
 module print_bottom_wall () { // name: CaseBottom.stl
-  bottom_wall();
+  rotate([0, 0, 90])
+    bottom_wall();
 }
 
 module print_left_wall () { // name: CaseLeft.stl
-  rotate([0, -90, 0])
+  rotate([0, -90, 90])
     left_wall();
 }
 
 module print_right_wall () { // name: CaseRight.stl
-  rotate([0, 90, 0])
+  rotate([0, 90, 90])
     right_wall();
 }
 
