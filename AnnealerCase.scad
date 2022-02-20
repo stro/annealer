@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 32 2022-02-19 02:35:34Z stro $
+// $Id: AnnealerCase.scad 33 2022-02-20 02:23:38Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1391,9 +1391,10 @@ module case_feeder_insert_engraved (width, height, name) {
         text(str(width, "×", height), size = cf_text_size, halign = "center", valign = "center", font = "Anton");
   }
   if (name) {
-    translate([cf_text_center_offset, - cf_text_height, height - cf_text_depth])
+    translate([cf_text_center_offset, 0, height - cf_text_depth])
+      rotate([0, 0, 45])
         resize([cf_insert_diameter - cf_drop_diameter, 0, 0], [true, false, false])
-        linear_extrude(cf_text_depth) 
+          linear_extrude(cf_text_depth) 
             text(str(name), size = cf_text_cal_size, halign = "center", valign = "center", font = "Anton");
     }
 }
