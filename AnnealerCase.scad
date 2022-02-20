@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 35 2022-02-20 07:09:48Z stro $
+// $Id: AnnealerCase.scad 36 2022-02-20 21:15:33Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -365,7 +365,7 @@ collator_drop_tube_adjustment = -57; // Probably can be calculated
 
 letter_size_margin = 4.0;
 
-ch_top_z = 131.0;
+ch_top_z = 121.0;
 
 ch_drop_slope = 10.0;
 
