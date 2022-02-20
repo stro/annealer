@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 33 2022-02-20 02:23:38Z stro $
+// $Id: AnnealerCase.scad 35 2022-02-20 07:09:48Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -363,6 +363,8 @@ drop_funnel_side_magnet_height = 120;
 
 collator_drop_tube_adjustment = -57; // Probably can be calculated
 
+letter_size_margin = 4.0;
+
 ch_top_z = 131.0;
 
 ch_drop_slope = 10.0;
@@ -381,6 +383,9 @@ ch_insert_diff = 5.0;
 ch_bottom_slope = 2.0;
 
 ch_mounts = [[0, -18.5], [-18.5, 33.5], [18.5, 18.0]];
+
+ch_height_discard = 2.0; // If it's this height of less, discard the insert
+ch_height_minimum = 3.0; // If insert is between "discard" and "minimum", use the minimum
 
 coil_diameter = 36.0;
 coil_height = 29.0;
@@ -1510,14 +1515,14 @@ module case_holder_insert_engraved ( case_width, case_height, caliber ) {
         rotate([90, 0, 90])
           resize([ch_top_depth / 2, 0, 0])
             linear_extrude(ch_insert_letter_depth)
-              text(str(caliber, " "), size = min(ch_insert_letter_size, case_height - case_thickness), halign = "center", valign = "center", font = "Anton");
-      
+              text(str(caliber, " "), size = min(ch_insert_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin)), halign = "center", valign = "center", font = "Anton");
+
       // Text: back
       translate([0, ch_top_depth / 2 - ch_insert_letter_depth, 0])
         rotate([90, 0, 180])
           resize([ch_top_width - case_thickness, 0, 0])
             linear_extrude(ch_insert_letter_depth)
-              text(str(caliber, " "), size = min(ch_insert_back_letter_size, case_height - case_thickness), halign = "center", valign = "center", font = "Anton");
+              text(str(caliber, " "), size = min(ch_insert_back_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin)), halign = "center", valign = "center", font = "Anton");
    
 
     }
@@ -2350,10 +2355,13 @@ module case_holder_top () {
 module case_holder_insert ( caliber ) {
   width_data = caliber_data(caliber);
  
+  case_height = width_data[1] - ch_case_difference - width_data[2];
+  
+  calc_height = case_height <= ch_height_discard ? 0 : case_height > ch_height_minimum ? case_height: ch_height_minimum;
   translate([cf_center_x, cf_center_y, ch_top_z - ch_top_thickness])
     difference () {
-      case_holder_insert_embossed(width_data[0], width_data[1] - ch_case_difference - width_data[2], caliber);
-      case_holder_insert_engraved(width_data[0], width_data[1] - ch_case_difference - width_data[2], caliber);
+      case_holder_insert_embossed(width_data[0], calc_height, caliber);
+      case_holder_insert_engraved(width_data[0], calc_height, caliber);
     }
 }
 
