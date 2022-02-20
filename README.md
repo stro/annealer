@@ -20,7 +20,7 @@ In addition to that, you'll need the following:
 
 * Wires and dupont jumper wires.
 
-* A 5.5x2.5mm power connector ([Example](https://smile.amazon.com/gp/product/B07QLZ9VWL/) to power the case feeder.
+* A 5.5x2.5mm power connector ([Example](https://smile.amazon.com/gp/product/B07QLZ9VWL/)) to power the case feeder.
 
 * 2 connector fittings ([Example](https://smile.amazon.com/gp/product/B00CHHYRT4/)).
 
