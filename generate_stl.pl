@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: generate_stl.pl 27 2022-02-18 01:37:46Z stro $
+# $Id: generate_stl.pl 37 2022-02-21 01:40:58Z stro $
 
 use strict;
 use warnings;
@@ -35,7 +35,7 @@ GetOptions(
 my $main_filename = 'AnnealerCase.scad';
 my $cal_filename = 'CaliberInfo.scad';
 
-my (%modules, @calibers, @modules_simple, @modules_cal);
+my (%modules, @calibers, @modules_simple, @modules_cal, %no_holder);
 
 my $openscad = $OSNAME eq 'MSWin32' ? 'C:\Program Files\OpenSCAD\openscad.com' :
                $OSNAME eq 'darwin'  ? '/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD' :
@@ -59,8 +59,10 @@ if (open my $F_IN, '<', $main_filename) {
     while (my $line = <$F_CAL>) {
       if ($line =~ m!cal\s+==\s+\"(.+?)\"!x) {
         my $cal = $1;
-        #utf8::encode($cal);
         push @calibers, $cal;
+        if ($line =~ m!no\s+holder!ix) {
+          $no_holder{$cal} = 1;
+        }
       }
     }
     close $F_CAL;
@@ -108,6 +110,12 @@ if (open my $F_IN, '<', $main_filename) {
         $cal =~ s!\.!!msgx;
         $cal =~ s!\N{U+00D7}!x!msgx;
         my $stl = sprintf($modules{$module}, $cal);
+
+        if ($module eq 'print_case_holder_insert_for_caliber' and $no_holder{$caliber}) {
+          say sprintf('Not making %s for %s', $module, $caliber) if $verbose;
+          next;
+        }
+
 
         my $filename = File::Spec->catfile('renders' => 'caliber-specific' => $stl);
         if (-e $filename and not $force) {
