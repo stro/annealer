@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 36 2022-02-20 21:15:33Z stro $
+// $Id: AnnealerCase.scad 38 2022-02-22 08:19:08Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -337,7 +337,6 @@ sensor_housing_diameter = 30.0;
 sensor_housing_length = 20.0;
 sensor_hex_offset = 5.0;
 
-
 sensor_low_mounts = false;
 drop_total_length = 200.0; // How far is the collator from the feeder
 
@@ -393,7 +392,8 @@ coil_z = 127.0;
 coil_bottom_clearance = 3.0; 
 
 coil_insert_height = 20.0;
-
+coil_insert_shield_diameter = 25.0;
+coil_insert_shield_height = 1.0;
 coil_insert_width = 5.0;
 
 servo_width = 10.0;
@@ -417,6 +417,9 @@ servo_connect_z = 40.0;
 servo_mount_top_clearance = 1.0;
 
 servo_z = ch_top_z / 2;
+
+cartridge_drop_length = 100.0;
+cartridge_drop_thickness = 2.8;
 
 collator_diameter = 192.0;
 collator_angle = 30.0;
@@ -1584,6 +1587,42 @@ module servo_holder_engraved () {
     }
 }
 
+// CARTRIDGE DROP
+
+module cartridge_drop_embossed () {
+  translate([cf_center_x, cf_center_y, servo_z - servo_mount_height - servo_arm_thickness - servo_hole_height - servo_mount_top_clearance - case_thickness / 2])
+    union () {
+      hull () {
+        translate([ch_mounts[0][0], ch_mounts[0][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
+        translate([ch_mounts[2][0], ch_mounts[2][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
+        // inverted by x axis
+        translate([- ch_mounts[2][0], ch_mounts[2][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true); 
+      }
+      hull () {
+        translate([ch_mounts[1][0], ch_mounts[1][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
+        // inverted by x axis
+        translate([- ch_mounts[2][0], ch_mounts[2][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true); 
+      }
+      translate([0, 0, - cartridge_drop_length / 2])
+        cylinder(h = cartridge_drop_length, d2 = cf_drop_diameter + ch_drop_slope + 2 * cartridge_drop_thickness, d1 = cf_drop_diameter + 2 * cartridge_drop_thickness, center = true); 
+    }
+}
+
+module cartridge_drop_engraved () {
+  translate([cf_center_x, cf_center_y, servo_z - servo_mount_height - servo_arm_thickness - servo_hole_height - servo_mount_top_clearance])
+    union () {
+      translate([0, 0, - (cartridge_drop_length + case_thickness) / 2])
+        cylinder(h = cartridge_drop_length + case_thickness, d2 = cf_drop_diameter + ch_drop_slope, d1 = cf_drop_diameter, center = true); 
+      
+      ch_mount_magnet_holes();
+    }
+}
+
 module ch_mount_magnet_holes (diameter = cf_magnet_diameter, height = cf_magnet_height) {
   for (xy = ch_mounts) {
     translate([xy[0], xy[1], - height / 2])
@@ -1730,27 +1769,33 @@ module collator_mount_holes_engraved () {
 // COIL INSERT
 
 module coil_insert_embossed () {
-  translate([cf_center_x, cf_center_y, ch_top_z + ch_top_thickness / 2 + coil_insert_height / 2])
+  translate([cf_center_x, cf_center_y, ch_top_z + ch_top_thickness / 2 + coil_insert_height / 2 + coil_insert_shield_height / 2])
     union () {
       translate([0, ch_top_depth / 4, 0])
-        cube([ch_top_width, ch_top_depth / 2, coil_insert_height], center = true);
+        cube([ch_top_width, ch_top_depth / 2, coil_insert_height + coil_insert_shield_height], center = true);
       hull () {
-        cylinder(h = coil_insert_height, d = ch_top_width, center = true);
+        cylinder(h = coil_insert_height + coil_insert_shield_height, d = ch_top_width, center = true);
       
         translate([0, - filament_wall / 2, 0])
-          cube([ch_top_width + case_thickness * 2, filament_wall, coil_insert_height], center = true);
+          cube([ch_top_width + case_thickness * 2, filament_wall, coil_insert_height + coil_insert_shield_height], center = true);
       }
     } 
 }
 
 module coil_insert_engraved () {
-  translate([cf_center_x, cf_center_y, ch_top_z + ch_top_thickness / 2 + coil_insert_height / 2])
+  translate([cf_center_x, cf_center_y, ch_top_z + ch_top_thickness / 2 + coil_insert_height / 2 + coil_insert_shield_height])
     union () {
       translate([0, ch_top_depth / 4, 0])
         cube([coil_diameter, ch_top_depth / 2, coil_insert_height], center = true);
         cylinder(h = coil_insert_height, d = coil_diameter, center = true);
-
     }
+  translate([cf_center_x, cf_center_y, ch_top_z + ch_top_thickness / 2 + coil_insert_shield_height / 2])
+    union () {
+      translate([0, ch_top_depth / 4, 0])
+        cube([coil_insert_shield_diameter, ch_top_depth / 2, coil_insert_shield_height], center = true);
+      cylinder(h = coil_insert_shield_height, d = coil_insert_shield_diameter, center = true);
+    }
+
   front_wall_center();
 }
 
@@ -2294,6 +2339,13 @@ module servo_holder () {
   difference () {
     servo_holder_embossed();
     servo_holder_engraved();
+  }
+}
+
+module cartridge_drop () {
+  difference () {
+    cartridge_drop_embossed();
+    cartridge_drop_engraved();
   }
 }
 
@@ -2943,8 +2995,13 @@ module print_collator_sensor_mount() { // name: CollatorSensor.stl
   collator_sensor_mount();
 }
 
-module print_coil_insert() { // name: CoilInsert.stl
+module print_coil_insert() { // name: HighTemp_CoilInsert.stl
   coil_insert();
+}
+
+module print_cartridge_drop() { // name: HighTemp_CartridgeDrop.stl
+  rotate([180, 0, 0])
+    cartridge_drop();
 }
 
 module print_nema_insert () { // name: MotorInsert.stl
