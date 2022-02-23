@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 38 2022-02-22 08:19:08Z stro $
+// $Id: AnnealerCase.scad 39 2022-02-23 16:02:54Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -27,10 +27,10 @@ use <contrib/Anton-Regular.ttf>
 front_insert_mount_enabled = false;
 top_insert_mount_enabled = true;
 top_funnel_mounts_enabled = true;
-top_funnel_mounts_number = 7;
+top_funnel_mounts_number = 8;
 
-case_x = 250;
-case_y = 200;
+case_x = 290;
+case_y = 220;
 case_z = 250;
 case_thickness = 5;
 
@@ -94,7 +94,7 @@ power_outlet_width = 27.4;
 power_outlet_height = 47.4;
 power_outlet_hole_z = 22.4;
 power_outlet_hole_x = 40.0;
-power_outlet_offset_x = 180.0;
+power_outlet_offset_x = 220.0;
 power_outlet_offset_z = 110.0;
 
 power12_out_offset_x = 60.0;
@@ -107,7 +107,7 @@ board_y = 89.0;
 board_margin = 3.0;
 board_height = 22.0;
 
-board_x_offset = 20;
+board_x_offset = 70;
 board_y_offset = 30; // from the back wall
 board_z = m3_head_height + bolt_margin;
 board_z_width = m3_head_diameter + 2 * bolt_margin;
@@ -127,7 +127,7 @@ relay_mount_diff = 69.0;
 fan_width = 80.2;
 fan_depth = 25.0;
 fan_height = 80.2;
-fan_x_offset = (case_x - fan_width)/ 2 - case_thickness;
+fan_x_offset = (250 - fan_width) / 2 - case_thickness; // Aligned with ZVS board
 fan_mount_offset = 71.6;
 fan_diameter = 75.0;
 fan_center_diameter = 33.0;
@@ -152,22 +152,23 @@ radiator_mount_width = power_vent_mount_width; // 5.0
 radiator_y_center = radiator_y_offset + radiator_diameter / 2;
 radiator_z_center = radiator_z_offset + radiator_diameter / 2;
 
-pump_width = 56.4;
-pump_depth = 65.0;
+pump_width = 65.0;
+pump_depth = 56.4;
 pump_height = 82.0;
 pump_x_offset = 2.0;
-pump_y1 = 10.2;
-pump_y2 = pump_y1 + 45.2;
-pump_x1 = 10.8;
-pump_x2 = pump_x1 + 34.0;
+pump_x1 = 10.2;
+pump_x2 = pump_x1 + 45.2;
+pump_y1 = 10.8;
+pump_y2 = pump_y1 + 34.0;
 pump_holder_height = 5.0;
 pump_holder_slope = 5.0;
 pump_holder_slope_x = pump_width;
 pump_holder_slope_z = 2.0;
+pump_holder_slope_width = 20.0;
 
 pump_hole_diameter = 23.0;
-pump_hole_x = 31.0;
-pump_hole_y = 43.0;
+pump_hole_x = 43.0;
+pump_hole_y = 31.0;
 
 insert_mount_x_offset = 0;
 insert_mount_y_offset = 50;
@@ -181,7 +182,7 @@ zvs_height = 53.0;
 zvs_z = 5.0;
 zvs_z_width = 7.0;
 zvs_z_hole = 3.4;
-zvs_x_offset = (case_x - zvs_width) / 2 - case_thickness - 2;
+zvs_x_offset = (250 - zvs_width) / 2 - case_thickness - 2;
 
 zvs_y_diff = 90.0;
 zvs_z_diff = 74.4;
@@ -233,7 +234,10 @@ front_coil_offset_x = 95.0; // from the left
 front_coil_offset_z = 105.0; // from the top
 front_coil_notch_width = 20.0;
 
-front_wall_part_width = 70.0;
+front_wall_left_part_width = 70.0;
+front_wall_right_part_width = 130.0;
+
+cf_mount_x_offset = 125.0;
 
 cf_center_x = 117.0;
 cf_plate_width = 100.0;
@@ -383,8 +387,9 @@ ch_bottom_slope = 2.0;
 
 ch_mounts = [[0, -18.5], [-18.5, 33.5], [18.5, 18.0]];
 
-ch_height_discard = 2.0; // If it's this height of less, discard the insert
+ch_height_discard = 1.0; // If it's this height of less, discard the insert
 ch_height_minimum = 3.0; // If insert is between "discard" and "minimum", use the minimum
+ch_single_magnet_minimum = 6.0; // Use one magnet hole if it's less than this height
 
 coil_diameter = 36.0;
 coil_height = 29.0;
@@ -461,7 +466,7 @@ collator_stand_overlap_thickness = 5.0;
 top_mount_x_diff_rear = 40.0;
 top_mount_x_offset_rear = cf_center_x - case_x / 2;
 top_mount_y_diff_rear = 30.0;
-top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset;
+top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset - 5.0;
 
 power_cover_thickness = 1.0;
 power_cover_width = 46.4;
@@ -523,10 +528,18 @@ module top_wall_embossed () {
         cube([ab_width, ab_depth, ab_height / 2]);
     }
   }
-     
+
   // front assembly blocks
   translate([0, 0, case_z - ab_height - 2 * case_thickness])
     front_assembly_blocks_embossed();
+
+  // rear center block
+  translate([case_x / 2, case_y - case_thickness - ab_depth / 2, case_z - ab_height / 2 - case_thickness])
+    rotate([180, 0, 0])
+      difference() {
+        single_assembly_block_embossed();
+        single_assembly_block_engraved();
+      }
 }
 
 module top_wall_engraved () {
@@ -534,7 +547,7 @@ module top_wall_engraved () {
   // front
   for (y = [-top_mount_y_diff_front / 2, top_mount_y_diff_front / 2]) {
     for (x = [-top_mount_x_diff_front / 2, top_mount_x_diff_front / 2]) {
-      translate([case_x / 2 + x, case_thickness + top_mount_y_offset + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
+      translate([cf_mount_x_offset + x, case_thickness + top_mount_y_offset + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
         union () {
           m4_nut_hole();
           translate([0, 0, case_thickness * 3.5])
@@ -552,7 +565,7 @@ module top_wall_engraved () {
 
 
   if (top_insert_mount_enabled) {
-    translate([case_thickness + front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset_top, case_z])
+    translate([case_thickness + front_wall_left_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset_top, case_z])
       rotate([0, 0, 180])
         ch_mount_magnet_holes();
   }
@@ -723,10 +736,10 @@ module right_wall_engraved () {
 module front_wall_left_embossed () {
   // front wall
   translate([0, 0, 0])
-    cube([front_wall_part_width, case_thickness, case_z]);
+    cube([front_wall_left_part_width, case_thickness, case_z]);
 
   if (front_insert_mount_enabled) {
-    translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
+    translate([front_wall_left_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
         hull () {
           for (xy = ch_mounts) {
@@ -736,13 +749,13 @@ module front_wall_left_embossed () {
         }
 
     hull () {
-      translate([front_wall_part_width / 2, case_thickness / 4, insert_mount_z_offset - case_thickness / 2])
-        cube([front_wall_part_width / 2, case_thickness / 2, case_thickness], center = true);
+      translate([front_wall_left_part_width / 2, case_thickness / 4, insert_mount_z_offset - case_thickness / 2])
+        cube([front_wall_left_part_width / 2, case_thickness / 2, case_thickness], center = true);
       
-      translate([front_wall_part_width / 2, case_thickness / 4, insert_mount_z_offset - case_thickness / 2 - insert_mount_z_rib])
+      translate([front_wall_left_part_width / 2, case_thickness / 4, insert_mount_z_offset - case_thickness / 2 - insert_mount_z_rib])
         sphere(case_thickness / 2);
 
-      translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
+      translate([front_wall_left_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
             translate([ch_mounts[0][0], ch_mounts[0][1], - case_thickness / 2])
               cylinder(h = case_thickness, d = cf_magnet_diameter + cf_magnet_holder_cover_radius, center = true);  
@@ -752,10 +765,10 @@ module front_wall_left_embossed () {
 
 module front_wall_left_engraved () {
   assembly_blocks_engraved();
-  translate([front_wall_part_width - ab_width / 2, - ab_depth / 2, ab_height / 2 + case_thickness])
+  translate([front_wall_left_part_width - ab_width / 2, - ab_depth / 2, ab_height / 2 + case_thickness])
     rotate([90, 0, 0])
       single_assembly_block_engraved();
-  translate([front_wall_part_width - ab_width / 2, - ab_depth / 2, case_z - ab_height /2 - case_thickness])
+  translate([front_wall_left_part_width - ab_width / 2, - ab_depth / 2, case_z - ab_height /2 - case_thickness])
     rotate([90, 180, 0])
       single_assembly_block_engraved();
 
@@ -764,7 +777,7 @@ module front_wall_left_engraved () {
     front_assembly_blocks_engraved();
 
   if (front_insert_mount_enabled) {
-    translate([front_wall_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
+    translate([front_wall_left_part_width / 2 + insert_mount_x_offset, insert_mount_y_offset -ch_top_depth, insert_mount_z_offset])
       rotate([0, 0, 180])
         ch_mount_magnet_holes();
   }
@@ -774,14 +787,14 @@ module front_wall_left_engraved () {
 
 module front_wall_center_embossed () {
   // front wall, bottom part
-  translate([front_wall_part_width, 0, 0])
-    cube([case_x - 2 * front_wall_part_width, case_thickness, ch_top_z + ch_top_thickness / 2]);  
+  translate([front_wall_left_part_width, 0, 0])
+    cube([case_x - front_wall_left_part_width - front_wall_right_part_width, case_thickness, ch_top_z + ch_top_thickness / 2]);  
 
   // mount strips
-  translate([front_wall_part_width, 0, 0])
-    cube([cf_center_x - ch_top_width /2 - case_thickness / 2 - front_wall_part_width, case_thickness, case_z]);  
+  translate([front_wall_left_part_width, 0, 0])
+    cube([cf_center_x - ch_top_width /2 - case_thickness / 2 - front_wall_left_part_width, case_thickness, case_z]);  
   translate([cf_center_x + ch_top_width /2 + case_thickness / 2, 0, 0])
-    cube([(case_x - front_wall_part_width )- (cf_center_x + ch_top_width /2 + case_thickness / 2) , case_thickness, case_z]);  
+    cube([(case_x - front_wall_right_part_width )- (cf_center_x + ch_top_width /2 + case_thickness / 2) , case_thickness, case_z]);  
 
   // left coil wall
   translate([cf_center_x - ch_top_width /2 - case_thickness / 2, cf_center_y / 2 + case_thickness / 2, (case_z + ch_top_z) / 2 - ch_top_thickness / 4 ])
@@ -842,8 +855,8 @@ module front_wall_center_engraved () {
 
 module front_wall_right_embossed () {
   // front wall
-  translate([case_x - front_wall_part_width, 0, 0])
-  cube([front_wall_part_width, case_thickness, case_z]);
+  translate([case_x - front_wall_right_part_width, 0, 0])
+  cube([front_wall_right_part_width, case_thickness, case_z]);
 
 
     
@@ -861,10 +874,10 @@ module front_wall_right_embossed () {
 }
 
 module front_wall_right_engraved () {
-  translate([case_x - front_wall_part_width + ab_width / 2, - ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([case_x - front_wall_right_part_width + ab_width / 2, - ab_depth /2 , ab_height / 2 + case_thickness])
     rotate([90, 0, 0])
       single_assembly_block_engraved();
-  translate([case_x - front_wall_part_width + ab_width / 2, - ab_depth /2, case_z - ab_height /2 - case_thickness])
+  translate([case_x - front_wall_right_part_width + ab_width / 2, - ab_depth /2, case_z - ab_height /2 - case_thickness])
     rotate([90, 180, 0])
       single_assembly_block_engraved();
     
@@ -988,6 +1001,13 @@ module rear_wall_engraved () {
   translate([case_thickness + power12_out_offset_x, case_y, case_z - case_thickness - power12_out_offset_z])
     rotate([90, 0, 0])
       cylinder(h = 2 * case_thickness, d = power12_out_diameter, center = true);
+
+  // Center blocks
+  for (z = [ab_height / 2 + case_thickness, case_z + ab_height / 2 - case_thickness]) {
+    translate([case_x / 2, case_y, z])
+      rotate([90, 0, 0]) 
+        m4_bolt_hole();
+  }
 
   // Covers all walls
 
@@ -1506,9 +1526,10 @@ module case_holder_insert_engraved ( case_width, case_height, caliber ) {
       cylinder(h = case_height, d2 = cf_drop_diameter, d1 = case_width, center = true);
 
       // Bottom magnets
-      translate([0, 0, cf_magnet_height + cf_magnet_bottom_height_ext - case_height / 2])
-        ch_mount_magnet_holes(diameter = cf_magnet_diameter + cf_magnet_bottom_ext, height = cf_magnet_height + cf_magnet_bottom_height_ext);
-
+      if (case_height >= ch_single_magnet_minimum) {
+        translate([0, 0, cf_magnet_height + cf_magnet_bottom_height_ext - case_height / 2])
+          ch_mount_magnet_holes(diameter = cf_magnet_diameter + cf_magnet_bottom_ext, height = cf_magnet_height + cf_magnet_bottom_height_ext);
+      }
       // Top magnets
       translate([0, 0, case_height / 2])
         ch_mount_magnet_holes();
@@ -1518,14 +1539,14 @@ module case_holder_insert_engraved ( case_width, case_height, caliber ) {
         rotate([90, 0, 90])
           resize([ch_top_depth / 2, 0, 0])
             linear_extrude(ch_insert_letter_depth)
-              text(str(caliber, " "), size = min(ch_insert_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin)), halign = "center", valign = "center", font = "Anton");
-
+              text(str(caliber, " "), size = min(ch_insert_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin), case_height - filament_wall * 2), halign = "center", valign = "center", font = "Anton");
+      
       // Text: back
       translate([0, ch_top_depth / 2 - ch_insert_letter_depth, 0])
         rotate([90, 0, 180])
           resize([ch_top_width - case_thickness, 0, 0])
             linear_extrude(ch_insert_letter_depth)
-              text(str(caliber, " "), size = min(ch_insert_back_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin)), halign = "center", valign = "center", font = "Anton");
+              text(str(caliber, " "), size = min(ch_insert_back_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin), case_height - filament_wall * 2), halign = "center", valign = "center", font = "Anton");
    
 
     }
@@ -2410,6 +2431,7 @@ module case_holder_insert ( caliber ) {
   case_height = width_data[1] - ch_case_difference - width_data[2];
   
   calc_height = case_height <= ch_height_discard ? 0 : case_height > ch_height_minimum ? case_height: ch_height_minimum;
+
   translate([cf_center_x, cf_center_y, ch_top_z - ch_top_thickness])
     difference () {
       case_holder_insert_embossed(width_data[0], calc_height, caliber);
@@ -2501,9 +2523,9 @@ module pump_holder () {
   translate([pump_width - pump_holder_slope_x, 0, 0])
     rotate([0, 180, 270])
       prism(pump_depth, pump_holder_slope_x, pump_holder_slope_z);
-  translate([0, pump_depth / 4, 0])
+  translate([0, pump_depth / 2 - pump_holder_slope_width / 2, 0])
     rotate([0, 180, 270])
-      prism(pump_depth /2 , pump_width, pump_width / 4);
+      prism(pump_holder_slope_width, pump_width, pump_width / 4);
 }
 
 module pump_holder_holes () {
@@ -2607,27 +2629,27 @@ module assembly_block_engraved () {
 }
 
 module front_assembly_blocks_embossed () {
-  translate([front_wall_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([front_wall_left_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     single_assembly_block_embossed();
-  translate([front_wall_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([front_wall_left_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     single_assembly_block_embossed();
-  translate([case_x - front_wall_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([case_x - front_wall_right_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     single_assembly_block_embossed();
-  translate([case_x - front_wall_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([case_x - front_wall_right_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     single_assembly_block_embossed();
 }
 
 module front_assembly_blocks_engraved (rotate_angle = 0) {
-  translate([front_wall_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([front_wall_left_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     rotate([0, rotate_angle, 0])
       single_assembly_block_engraved();
-  translate([front_wall_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([front_wall_left_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     rotate([0, rotate_angle, 0])
       single_assembly_block_engraved();
-  translate([case_x - front_wall_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([case_x - front_wall_right_part_width - ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     rotate([0, rotate_angle, 0])
       single_assembly_block_engraved();
-  translate([case_x - front_wall_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
+  translate([case_x - front_wall_right_part_width + ab_width / 2, case_thickness + ab_depth /2 , ab_height / 2 + case_thickness])
     rotate([0, rotate_angle, 0])
       single_assembly_block_engraved();
 }
@@ -2642,6 +2664,11 @@ module bottom_assembly_blocks () {
       rotate([0, 0, 180])
         assembly_block();
   }
+  translate([case_x / 2, case_y - case_thickness - ab_depth / 2, ab_height / 2 + case_thickness])
+    difference() {
+      single_assembly_block_embossed();
+      single_assembly_block_engraved();
+    }
 }
 module left_assembly_blocks () {
   // front left

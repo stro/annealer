@@ -1,4 +1,4 @@
-// $Id: CaliberInfo.scad 37 2022-02-21 01:40:58Z stro $
+// $Id: CaliberInfo.scad 39 2022-02-23 16:02:54Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -29,8 +29,8 @@ function caliber_data ( cal ) =
   cal == ".223 Remington"         ? [10.0, 44.0,  8.4 ] :
   cal == ".243 Winchester"        ? [13.0, 51.0, 12.7 ] :
   cal == ".270 Winchester"        ? [13.0, 62.0, 14.7 ] :
-  cal == ".30 Herrett"            ? [14.0, 41.0,  9.4 ] :
-  cal == ".300 AAC Blackout"      ? [10.0, 34.0,  6.5 ] : // No holder
+  cal == ".30 Herrett"            ? [14.0, 41.0,  3.4 ] :
+  cal == ".300 AAC Blackout"      ? [10.0, 34.0,  6.4 ] :
   cal == ".30-30 Winchester"      ? [14.0, 52.0, 14.5 ] :
   cal == ".308 Winchester"        ? [13.0, 51.0, 11.2 ] :
   cal == ".30-06 Springfield"     ? [13.0, 62.0, 13.2 ] :

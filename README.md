@@ -53,7 +53,7 @@ Case feeder requires:
 
 # Assembly instructions
 
-First, print all parts of the annealer enclosure. The maximum size of any part is 250mm so you'll need a larger 3D-printer such as Creality CR-10. It will take several days to finish printing all that. 
+First, print all parts of the annealer enclosure. The maximum size of any part is 290mm so you'll need a larger 3D-printer such as Creality CR-10. It will take several days to finish printing all that. 
 Use 0.2mm layers. Use supports whenever magnet holes or bolt holes are printed on the bed side. You don't really need supports, but it will make your printed model nicer. Most parts will benefit from using brims for increased bed plate adhesion.   
 
 All parts can be printed with PLA with the exception of one part: the coil insert should be printed with high-temperature resistant filament like polycarbonate. Don't print it with PLA, it's better to leave the coil alone.
