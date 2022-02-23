@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 39 2022-02-23 16:02:54Z stro $
+// $Id: AnnealerCase.scad 40 2022-02-23 18:34:51Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -2948,7 +2948,7 @@ module print_right_wall () { // name: CaseRight.stl
 }
 
 module print_rear_wall () { // name: CaseRear.stl
-  rotate([-90, 0, 0])
+  rotate([-90, 0, 90])
     rear_wall();
 }
 

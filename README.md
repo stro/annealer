@@ -64,7 +64,7 @@ Install Arduino UI on your computer, connect the board, compile and upload the f
 
 Use a provided coil guide to make a coil out of 1/8" copper tube.
 
-Put M4 bolts into all slots in 3D-printed parts and use hot glue to fix them in place. It's not really necessary but it will make assembling much faster and problem-free.
+Put M4 nuts into all slots in 3D-printed parts and use hot glue to fix them in place. It's not really necessary but it will make assembling much faster and problem-free.
 
 Assemble! (I may provide more detailed instructions later)
 
