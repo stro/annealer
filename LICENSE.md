@@ -1,5 +1,5 @@
 ﻿
-Copyright (c) 2021 sttek.com <https://sttek.com>
+Copyright (c) 2022 sttek.com <https://sttek.com>
 
 This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International International License.
 
@@ -23,12 +23,6 @@ Under the following terms:
 
 *******************************************************************************
 
-contrib/threads-library-by-cuiso-v1.scad
+contrib/Anton-Regular.ttf is licensed under the Open Font License. 
 
-"OpenScad library. Threads for screws and nuts V1 by Cuiso" is licensed under the Creative Commons - Attribution license
-
-https://creativecommons.org/licenses/by/4.0/
-
-Copyright (c) Andres Roman Blanca
-
-https://www.thingiverse.com/thing:3131126
+https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
