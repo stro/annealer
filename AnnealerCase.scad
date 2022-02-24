@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 40 2022-02-23 18:34:51Z stro $
+// $Id: AnnealerCase.scad 42 2022-02-24 02:02:48Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -3052,6 +3052,6 @@ module print_case_holder_insert_for_caliber ( cal ) { // name: HolderInsert-%s.s
 }
 
 module print_drop_funnel_for_caliber ( cal ) { // name: Funnel-%s.stl
-  rotate([180, 0, 0])
+  rotate([180, 0, 180])
     drop_funnel(cal);
 }
