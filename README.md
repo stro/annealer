@@ -71,3 +71,19 @@ Assemble! (I may provide more detailed instructions later)
 Using super glue, put magnets into slots and fix them in place. Keep attention to magnet polarity, once you have them in place, you're going to use the same orientation for everything.
 
 Start annealing.
+
+## License AKA **You cannot sell it**
+
+This project is released under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License. What it means to you in just four words?
+
+***You cannot sell it***
+
+You can share and adapt it freely. I cannot revoke these freedoms as long as you follow the license terms, specifically:
+
+* Attribution - you must give appropriate credit
+* Non-Commercial - you cannot profit from it
+* ShareAlike - if you change something, you must use the same license terms
+
+Full license text can be found at https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+Copyright (c) 2022 sttek.com
