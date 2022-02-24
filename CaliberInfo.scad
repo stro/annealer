@@ -1,11 +1,11 @@
-// $Id: CaliberInfo.scad 41 2022-02-23 22:57:41Z stro $
+// $Id: CaliberInfo.scad 44 2022-02-24 09:26:42Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
- * This work is licensed under a Creative Commons Attribution-NonCommercial
+ * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike
  * 4.0 International License.
  *
- * https://creativecommons.org/licenses/by-nc/4.0/
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/
  * 
  * You are free to:
  *   Share — copy and redistribute the material in any medium or format
@@ -16,6 +16,8 @@
  *     reasonable manner, but not in any way that suggests the licensor
  *     endorses you or your use.
  *   NonCommercial — You may not use the material for commercial purposes. 
+ *   ShareAlike — If you remix, transform, or build upon the material, you
+       must distribute your contributions under the same license as the original.
  *   No additional restrictions — You may not apply legal terms or
  *     technological measures that legally restrict others from doing anything
  *     the license permits.
