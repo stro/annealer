@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 46 2022-02-26 06:27:45Z stro $
+// $Id: AnnealerCase.scad 47 2022-02-26 11:40:50Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -29,6 +29,7 @@ use <contrib/Anton-Regular.ttf>
 front_insert_mount_enabled = false;
 top_insert_mount_enabled = true;
 top_funnel_mounts_enabled = true;
+top_funnel_mounts_two_rows = true;
 top_funnel_mounts_number = 8;
 
 case_x = 290;
@@ -205,7 +206,8 @@ zvs_sensor_space = 2.0;
 zvs_sensor_diff = 13.4 + zvs_sensor_width;
 zvs_sensor_offset = -20.0; // to the front
 
-top_funnel_mount_x_offset = 20;
+top_funnel_mount_x_offset = 15;
+top_funnel_mount_x_offset_2nd_row = 60;
 top_funnel_mount_y_offset = 0;
 top_funnel_mount_y_diff = 20;
 
@@ -519,15 +521,15 @@ module top_wall_embossed () {
   // front
   for (y = [-top_mount_y_diff_front / 2, top_mount_y_diff_front / 2]) {
     for (x = [-top_mount_x_diff_front / 2, top_mount_x_diff_front / 2]) {
-      translate([case_x / 2 + x - ab_width / 2, case_thickness + top_mount_y_offset + y - ab_depth / 2, case_z - case_thickness - ab_height / 2])
-        cube([ab_width, ab_depth, ab_height / 2]);
+      translate([cf_mount_x_offset + x - ab_width / 2, case_thickness + top_mount_y_offset + y - ab_depth / 2, case_z - case_thickness - ab_height])
+        cube([ab_width, ab_depth, ab_height]);
     }
   }
   // rear
   for (y = [-top_mount_y_diff_rear / 2, top_mount_y_diff_rear / 2]) {
     for (x = [-top_mount_x_diff_rear / 2, top_mount_x_diff_rear / 2]) {
-      translate([case_x / 2 + x - ab_width / 2 + top_mount_x_offset_rear, case_y - case_thickness - top_mount_y_offset_rear + y - ab_depth / 2, case_z - case_thickness - ab_height / 2])
-        cube([ab_width, ab_depth, ab_height / 2]);
+      translate([case_x / 2 + x - ab_width / 2 + top_mount_x_offset_rear, case_y - case_thickness - top_mount_y_offset_rear + y - ab_depth / 2, case_z - case_thickness - ab_height])
+        cube([ab_width, ab_depth, ab_height]);
     }
   }
 
@@ -551,9 +553,10 @@ module top_wall_engraved () {
     for (x = [-top_mount_x_diff_front / 2, top_mount_x_diff_front / 2]) {
       translate([cf_mount_x_offset + x, case_thickness + top_mount_y_offset + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
         union () {
-          m4_nut_hole();
-          translate([0, 0, case_thickness * 3.5])
-            m4_bolt_hole();
+          translate([0, 0, -ab_height/ 2])
+          m4_nut_hole(ab_height);
+          translate([0, 0, 0])
+            m4_bolt_hole(4 * ab_height);
         }
     }
   }
@@ -578,6 +581,16 @@ module top_wall_engraved () {
         for (x = [ - drop_funnel_magnet_offset, drop_funnel_magnet_offset]) {
           translate([x, 0, - cf_magnet_height / 2])
             cylinder(h = cf_magnet_height, d = cf_magnet_diameter, center = true);
+      }
+    }
+
+    if (top_funnel_mounts_two_rows) {
+      for(y = [1 : top_funnel_mounts_number]) {
+        translate([case_x - case_thickness - top_funnel_mount_x_offset_2nd_row - drop_funnel_magnet_offset, top_funnel_mount_y_diff * y + top_funnel_mount_y_offset, case_z])
+          for (x = [ - drop_funnel_magnet_offset, drop_funnel_magnet_offset]) {
+            translate([x, 0, - cf_magnet_height / 2])
+              cylinder(h = cf_magnet_height, d = cf_magnet_diameter, center = true);
+        }
       }
     }
   }
@@ -1780,7 +1793,8 @@ module collator_mount_holes_engraved () {
     for (x = [-top_mount_x_diff_rear / 2, top_mount_x_diff_rear / 2]) {
       translate([case_x / 2 + x + top_mount_x_offset_rear, case_y - case_thickness - top_mount_y_offset_rear + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
         union () {
-          m4_nut_hole();
+          translate([0, 0, -ab_height / 2])
+            m4_nut_hole(ab_height);
           translate([0, 0, 3 * case_thickness])
             rotate([180, 0, 0])
               m4_bolt_hole();
@@ -2602,7 +2616,7 @@ module single_assembly_block_engraved () {
   rotate([0, 270, 90])
     union () {
       m4_hole_and_drop(ab_height);
-      cylinder(h = ab_depth * 4, d = m4_diameter, center = true);
+      cylinder(h = ab_depth * 2, d = m4_diameter, center = true);
       translate([0, 0, ab_width - m4_head_height / 2])
         cylinder(h = m4_head_height, d = m4_head_diameter, center = true); 
     }
@@ -2752,8 +2766,8 @@ module m4_hole(length = 2 * m4_length) {
   cylinder(h = length, d = m4_diameter, center = true);
 }
 
-module m4_bolt_hole() {
-  cylinder(h = 2 * m4_length, d = m4_diameter, center = true);
+module m4_bolt_hole(length = 2 * m4_length) {
+  cylinder(h = length, d = m4_diameter, center = true);
 
   // bolt holes for M4
   translate([0, 0, - m4_head_height / 2])
