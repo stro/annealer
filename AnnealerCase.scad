@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 44 2022-02-24 09:26:42Z stro $
+// $Id: AnnealerCase.scad 46 2022-02-26 06:27:45Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1005,7 +1005,7 @@ module rear_wall_engraved () {
       cylinder(h = 2 * case_thickness, d = power12_out_diameter, center = true);
 
   // Center blocks
-  for (z = [ab_height / 2 + case_thickness, case_z + ab_height / 2 - case_thickness]) {
+  for (z = [ab_height / 2 + case_thickness, case_z - ab_height / 2 - case_thickness]) {
     translate([case_x / 2, case_y, z])
       rotate([90, 0, 0]) 
         m4_bolt_hole();
