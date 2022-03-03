@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 47 2022-02-26 11:40:50Z stro $
+// $Id: AnnealerCase.scad 48 2022-03-03 06:10:01Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -30,7 +30,7 @@ front_insert_mount_enabled = false;
 top_insert_mount_enabled = true;
 top_funnel_mounts_enabled = true;
 top_funnel_mounts_two_rows = true;
-top_funnel_mounts_number = 8;
+top_funnel_mounts_number = 6; // multiply by two for two rows, i.e. 6 is for 12 mounts
 
 case_x = 290;
 case_y = 220;
@@ -170,8 +170,8 @@ pump_holder_slope_z = 2.0;
 pump_holder_slope_width = 20.0;
 
 pump_hole_diameter = 23.0;
-pump_hole_x = 43.0;
-pump_hole_y = 31.0;
+pump_hole_x = 34.0;
+pump_hole_y = 38.0;
 
 insert_mount_x_offset = 0;
 insert_mount_y_offset = 50;
@@ -226,7 +226,7 @@ led_x_margin = 2.0;
 front_center_depth = 75.0;
 
 button_diameter = 19.0;
-button_row_offset = 40.0; // from the right
+button_row_offset = 80.0; // from the right
 button_vertical_space = 35.0;
 button_z_offset = 20.0; // from the bottom
 button_label_offset = 7.5 + button_diameter / 2;
