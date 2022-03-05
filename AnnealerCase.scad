@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 48 2022-03-03 06:10:01Z stro $
+// $Id: AnnealerCase.scad 49 2022-03-05 08:01:32Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -470,7 +470,7 @@ collator_stand_overlap_thickness = 5.0;
 top_mount_x_diff_rear = 40.0;
 top_mount_x_offset_rear = cf_center_x - case_x / 2;
 top_mount_y_diff_rear = 30.0;
-top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset - 5.0;
+top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset + 15.0;
 
 power_cover_thickness = 1.0;
 power_cover_width = 46.4;
