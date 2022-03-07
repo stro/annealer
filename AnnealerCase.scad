@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 49 2022-03-05 08:01:32Z stro $
+// $Id: AnnealerCase.scad 50 2022-03-07 21:26:35Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -313,6 +313,7 @@ cf_center_y = - cf_nema_offset_y - cf_nema_mount_offset / 2 - cf_insert_diameter
 
 cf_drop_tube_offset = 40.0;
 cf_drop_tube_length = 70.0;
+cf_drop_tube_extra_length = 20.0; // extra length below the cover
 cf_drop_tube_thickness = 2.0;
 
 cf_top_diameter = 15.0;
@@ -1389,8 +1390,8 @@ module case_feeder_drop_embossed (){
   drop_width = cf_drop_diameter + cf_drop_tube_thickness * 2;
   drop_length = cf_top_holder_holes_offset + drop_width / 2;
     
-  translate([cf_center_x, - cf_nema_offset_y - cf_nema_mount_offset / 2 - cf_insert_diameter / 2 + cf_drop_diameter / 2, case_z - cf_drop_tube_length / 2])
-    cylinder(h = cf_drop_tube_length, d1 = cf_drop_diameter + cf_drop_tube_thickness, d2 = cf_drop_diameter + 2 * cf_drop_tube_thickness, center = true); 
+  translate([cf_center_x, - cf_nema_offset_y - cf_nema_mount_offset / 2 - cf_insert_diameter / 2 + cf_drop_diameter / 2, case_z - (cf_drop_tube_length + cf_drop_tube_extra_length) / 2])
+    cylinder(h = cf_drop_tube_length + cf_drop_tube_extra_length, d1 = cf_drop_diameter + cf_drop_tube_thickness, d2 = cf_drop_diameter + 2 * cf_drop_tube_thickness, center = true); 
 
   intersection () {
     translate([0, 0, - case_thickness])
@@ -1408,8 +1409,8 @@ module case_feeder_drop_embossed (){
 }
 
 module case_feeder_drop_engraved (){
-  translate([cf_center_x, - cf_nema_offset_y - cf_nema_mount_offset / 2 - cf_insert_diameter / 2 + cf_drop_diameter / 2, case_z - cf_drop_tube_length / 2])
-    cylinder(h = cf_drop_tube_length, d1 = cf_drop_diameter, d2 = cf_drop_diameter + cf_drop_tube_thickness, center = true); 
+  translate([cf_center_x, - cf_nema_offset_y - cf_nema_mount_offset / 2 - cf_insert_diameter / 2 + cf_drop_diameter / 2, case_z - (cf_drop_tube_length + cf_drop_tube_extra_length) / 2])
+    cylinder(h = cf_drop_tube_length + cf_drop_tube_extra_length, d1 = cf_drop_diameter, d2 = cf_drop_diameter + cf_drop_tube_thickness, center = true); 
 
   // Drop hole mounting holes
   for (x = [- cf_drop_tube_offset / 2, cf_drop_tube_offset / 2]) {
