@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 50 2022-03-07 21:26:35Z stro $
+// $Id: AnnealerCase.scad 51 2022-03-08 09:11:44Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -257,6 +257,7 @@ filament_wall = 0.4;
 cf_space = 1.0;
 cf_extra_space = 0.0;
 cf_insert_diameter = 80.0;
+cf_insert_extra_diameter = 2.0; // roughly cf_space * 2
 cf_insert_height = 80.0; // Max insert height + magnet mount
 cf_base_height = 15.0;
 cf_base_diameter = 45.0;
@@ -1426,8 +1427,8 @@ module case_feeder_insert_embossed (width, diameter, height) {
     cylinder(h = height, d = diameter, center = true);
 }
 
-module case_feeder_insert_engraved (width, height, name) {
-  case_feeder_insert_engraved_common(width, height);
+module case_feeder_insert_engraved (width, diameter, height, name) {
+  case_feeder_insert_engraved_common(width, diameter, height, name);
   case_feeder_insert_engraved_magnet_holes(cf_magnet_diameter + cf_magnet_bottom_ext, cf_magnet_height + cf_magnet_bottom_height_ext);
   if (cf_engrave_dimensions) {
     translate([cf_text_center_offset, name ? cf_text_name_offset : 0, height - cf_text_depth])
@@ -1443,38 +1444,37 @@ module case_feeder_insert_engraved (width, height, name) {
     }
 }
 
-module case_feeder_insert_engraved_common (width, height, name) {
+module case_feeder_insert_engraved_common (width, diameter, height, name) {
   for (angle = [0, 90, 180, 270]) {
     // Case holders
     rotate([0, 0, angle])
-      translate([cf_insert_diameter / 2 - width / 2, 0, height / 2])
+      translate([diameter / 2 - width / 2, 0, height / 2])
         union () {
           cylinder(h = height, d = width, center = true);
-          translate([width / 2, 0, 0])
-            cube([width, width, height], center = true);
-
-          // lower cone
-          translate([0, 0, (cf_drop_diameter - width - height) / 2]) 
-            union () {
-              cylinder(h = cf_drop_diameter - width, d1 = cf_drop_diameter, d2 = width, center = true);
-              translate([0, - cf_drop_diameter /2 , - (cf_drop_diameter - width) / 2])
-                prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-              rotate([0, 0, 180])
-                translate([-cf_drop_diameter, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
-                  prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-            }
                             
-            // top cone
-            translate([0, 0, (height + width - cf_drop_diameter)/ 2 ] ) 
-              rotate([0, 180, 180])
-                union () {
-                  cylinder(h = cf_drop_diameter - width, d1 = cf_drop_diameter, d2 = width, center = true);
-                  translate([0, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
+          // top cone
+          translate([0, 0, (height + width - cf_drop_diameter)/ 2 ])
+            rotate([0, 180, 180])
+              union () {
+                cylinder(h = cf_drop_diameter - width, d1 = cf_drop_diameter, d2 = width, center = true);
+                translate([0, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
+                  prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
+                rotate([0, 0, 180])
+                  translate([-cf_drop_diameter, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
                     prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-                  rotate([0, 0, 180])
-                    translate([-cf_drop_diameter, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
-                      prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-                }
+                translate([width / 4, 0, 0])
+                  cube([width / 2, width, cf_drop_diameter - width], center = true);
+              }
+
+          // slope
+          hull () {
+            translate([0, 0, (height + width - cf_drop_diameter)/ 2 ])
+              rotate([0, 180, 180])
+                translate([width / 4, 0, 0])
+                  cube([width / 2, width, cf_drop_diameter - width], center = true);
+            translate([0, 0, 0])
+              cylinder(h = 0.1, d = width, center = true);
+          }
         }
     }
 }
@@ -2411,8 +2411,8 @@ module case_feeder_drop (){
 module case_feeder_insert (width, height = cf_insert_height, name = "") {
   translate([0, 0, cf_base_height])
     difference () {
-      case_feeder_insert_embossed(width, cf_insert_diameter, height);
-      case_feeder_insert_engraved(width, height, name);
+      case_feeder_insert_embossed(width, cf_insert_diameter + cf_insert_extra_diameter, height);
+      case_feeder_insert_engraved(width, cf_insert_diameter + cf_insert_extra_diameter, height, name);
     }
 }
 
