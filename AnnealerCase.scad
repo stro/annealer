@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 51 2022-03-08 09:11:44Z stro $
+// $Id: AnnealerCase.scad 52 2022-03-10 07:04:19Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -264,6 +264,7 @@ cf_base_diameter = 45.0;
 cf_base_gap = 2.0;
 cf_base_mark_size = 2.0;
 cf_drop_diameter = 15.0;
+cf_drop_slope_y = 18.0;
 
 cf_base_slope = 30.0; // degrees
 cf_top_slope = 45.0;  // degrees
@@ -1445,26 +1446,13 @@ module case_feeder_insert_engraved (width, diameter, height, name) {
 }
 
 module case_feeder_insert_engraved_common (width, diameter, height, name) {
+  echo(width, diameter, height, name);
   for (angle = [0, 90, 180, 270]) {
     // Case holders
     rotate([0, 0, angle])
       translate([diameter / 2 - width / 2, 0, height / 2])
         union () {
           cylinder(h = height, d = width, center = true);
-                            
-          // top cone
-          translate([0, 0, (height + width - cf_drop_diameter)/ 2 ])
-            rotate([0, 180, 180])
-              union () {
-                cylinder(h = cf_drop_diameter - width, d1 = cf_drop_diameter, d2 = width, center = true);
-                translate([0, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
-                  prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-                rotate([0, 0, 180])
-                  translate([-cf_drop_diameter, - cf_drop_diameter / 2, - (cf_drop_diameter - width) / 2])
-                    prism(cf_drop_diameter, (cf_drop_diameter - width) / 2, cf_drop_diameter - width);
-                translate([width / 4, 0, 0])
-                  cube([width / 2, width, cf_drop_diameter - width], center = true);
-              }
 
           // slope
           hull () {
@@ -1473,7 +1461,17 @@ module case_feeder_insert_engraved_common (width, diameter, height, name) {
                 translate([width / 4, 0, 0])
                   cube([width / 2, width, cf_drop_diameter - width], center = true);
             translate([0, 0, 0])
-              cylinder(h = 0.1, d = width, center = true);
+              cylinder(h = filament_wall, d = width, center = true);
+
+            translate([0, 0, (height + width - cf_drop_diameter)/ 2 ])
+              rotate([0, 180, 180])
+                translate([0, 0, - (cf_drop_diameter - width + filament_wall) / 2])
+                  union () {
+                    resize([cf_drop_slope_y, cf_drop_diameter, filament_wall])
+                      cylinder(h = filament_wall, d = cf_drop_diameter, center = true);
+                    translate([cf_drop_diameter / 4, 0, 0])
+                      cube([cf_drop_diameter / 2, cf_drop_diameter, filament_wall], center = true);
+                  }
           }
         }
     }
