@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 52 2022-03-10 07:04:19Z stro $
+// $Id: AnnealerCase.scad 53 2022-03-11 19:18:18Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1445,8 +1445,7 @@ module case_feeder_insert_engraved (width, diameter, height, name) {
     }
 }
 
-module case_feeder_insert_engraved_common (width, diameter, height, name) {
-  echo(width, diameter, height, name);
+module case_feeder_insert_engraved_common (width, diameter, height, name) { 
   for (angle = [0, 90, 180, 270]) {
     // Case holders
     rotate([0, 0, angle])
