@@ -1,4 +1,4 @@
-// $Id: CaliberInfo.scad 54 2022-03-12 03:18:15Z stro $
+// $Id: CaliberInfo.scad 56 2022-03-13 07:02:33Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -35,7 +35,7 @@ function caliber_data ( cal ) =
   cal == ".300 AAC Blackout"      ? [11.0, 34.0,  6.4 ] :
   cal == ".30-30 Winchester"      ? [14.0, 51.0, 14.5 ] :
   cal == ".308 Winchester"        ? [13.0, 51.0, 11.2 ] :
-  cal == ".30-06 Springfield"     ? [13.0, 62.0, 13.2 ] :
+  cal == ".30-06 Springfield"     ? [13.0, 63.0, 13.2 ] :
   cal == ".303 British"           ? [15.0, 55.0, 10.0 ] :
   cal == "7-30 Waters"            ? [14.0, 52.0, 11.4 ] :
   cal == "7.62×54mmR"             ? [15.0, 52.0, 13.7 ] :

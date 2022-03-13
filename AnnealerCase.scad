@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 53 2022-03-11 19:18:18Z stro $
+// $Id: AnnealerCase.scad 56 2022-03-13 07:02:33Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -319,6 +319,8 @@ cf_drop_tube_extra_length = 20.0; // extra length below the cover
 cf_drop_tube_thickness = 2.0;
 
 cf_top_diameter = 15.0;
+
+cf_insert_top_clearance = 2.0; // how much the case should stick out
 
 mount_tube_length = 50.0;
 tube_hole_diameter = 15.0;
@@ -2408,8 +2410,8 @@ module case_feeder_drop (){
 module case_feeder_insert (width, height = cf_insert_height, name = "") {
   translate([0, 0, cf_base_height])
     difference () {
-      case_feeder_insert_embossed(width, cf_insert_diameter + cf_insert_extra_diameter, height);
-      case_feeder_insert_engraved(width, cf_insert_diameter + cf_insert_extra_diameter, height, name);
+      case_feeder_insert_embossed(width, cf_insert_diameter + cf_insert_extra_diameter, height - cf_insert_top_clearance);
+      case_feeder_insert_engraved(width, cf_insert_diameter + cf_insert_extra_diameter, height - cf_insert_top_clearance, name);
     }
 }
 
