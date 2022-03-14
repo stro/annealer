@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: generate_stl.pl 37 2022-02-21 01:40:58Z stro $
+# $Id: generate_stl.pl 57 2022-03-14 05:59:48Z stro $
 
 use strict;
 use warnings;
@@ -72,7 +72,7 @@ if (open my $F_IN, '<', $main_filename) {
     say $F_OUT sprintf('use <./%s>;', $main_filename);
     say $F_OUT 'print = "nothing";';
     say $F_OUT 'caliber = "missing"; // can be missing';
-    
+
     foreach my $module (sort keys %modules) {
       if ($module =~ m!for_caliber!x) {
         say $F_OUT sprintf('if (print == "%s") { %s(caliber); }', $module, $module);
@@ -86,6 +86,9 @@ if (open my $F_IN, '<', $main_filename) {
 
     say sprintf('Generated file %s', $temp_filename) if $verbose;
 
+    mkdir 'renders' unless -d 'renders';
+    mkdir File::Spec->catfile('renders', 'caliber-specific') unless -d File::Spec->catfile('renders', 'caliber-specific');
+
     foreach my $module (@modules_simple) {
       my $stl = $modules{$module};
 
@@ -97,7 +100,7 @@ if (open my $F_IN, '<', $main_filename) {
 
       say sprintf('Generate %s from %s', $stl, $module);
 
-      my @cmd = ($openscad, '-o', $filename, '-D', sprintf('"print=\"%s\""', $module), $temp_filename);
+      my @cmd = ($openscad, '-o', $filename, '-D', sprintf($OSNAME eq 'MSWin32' ? '"print=\"%s\""' : 'print="%s"', $module), $temp_filename);
       my $time = time;
       system(@cmd);
       say sprintf('  Generated in %d seconds', time - $time);
@@ -124,8 +127,9 @@ if (open my $F_IN, '<', $main_filename) {
         }
 
         say sprintf('Generate %s from %s; caliber %s', $stl, $module, $caliber);
-        
-        my @cmd = ($openscad, '-o', $filename, '-D', sprintf('"print=\"%s\""', $module), '-D', sprintf('"caliber=\"%s\""', $caliber), $temp_filename);
+
+        my @cmd = ($openscad, '-o', $filename, '-D', sprintf($OSNAME eq 'MSWin32' ? '"print=\"%s\""' : 'print="%s"', $module),
+                                               '-D', sprintf($OSNAME eq 'MSWin32' ? '"caliber=\"%s\""' : 'caliber="%s"', $caliber), $temp_filename);
         my $time = time;
         system(@cmd);
         say sprintf('  Generated in %d seconds', time - $time);
