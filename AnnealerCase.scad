@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 58 2022-03-31 06:54:05Z stro $
+// $Id: AnnealerCase.scad 59 2022-04-01 01:10:31Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -2944,43 +2944,51 @@ module vq () {
 
 // Case walls
 module print_top_wall () { // name: CaseTop.stl
-  rotate([180, 0, 90])
-    top_wall();
+  translate([- case_thickness, - case_thickness, case_z])
+    rotate([180, 0, 90])
+      top_wall();
 }
 
 module print_bottom_wall () { // name: CaseBottom.stl
-  rotate([0, 0, 90])
-    bottom_wall();
+  translate([case_y - case_thickness, - case_thickness, 0])
+    rotate([0, 0, 90])
+      bottom_wall();
 }
 
 module print_left_wall () { // name: CaseLeft.stl
-  rotate([0, -90, 90])
-    left_wall();
+  translate([case_y - case_thickness, case_z, 0])
+    rotate([0, -90, 90])
+      left_wall();
 }
 
 module print_right_wall () { // name: CaseRight.stl
-  rotate([0, 90, 90])
-    right_wall();
+  translate([-case_thickness, case_z, case_x])
+    rotate([0, 90, -90])
+      right_wall();
 }
 
 module print_rear_wall () { // name: CaseRear.stl
-  rotate([-90, 0, 90])
-    rear_wall();
+  translate([case_z, 0, case_y])
+    rotate([-90, 0, 90])
+      rear_wall();
 }
 
 module print_front_wall_left () { // name: CaseFrontLeft.stl
-  rotate([-90, 0, 0])
-    front_wall_left();
+  translate([0, 0, case_thickness])
+    rotate([-90, 0, 0])
+      front_wall_left();
 }
 
 module print_front_wall_center () { // name: CaseFrontCenter.stl
-  rotate([-90, 0, 0])
-    front_wall_center();
+  translate([-front_wall_left_part_width, 0, case_thickness])
+    rotate([-90, 0, 0])
+      front_wall_center();
 }
 
 module print_front_wall_right () { // name: CaseFrontRight.stl
-  rotate([-90, 0, 0])
-    front_wall_right();
+  translate([- case_x + front_wall_right_part_width, 0, case_thickness])
+    rotate([-90, 0, 0])
+      front_wall_right();
 }
 
 module print_zvs_mount () { // name: ZVSMount.stl
