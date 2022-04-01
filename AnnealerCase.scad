@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 59 2022-04-01 01:10:31Z stro $
+// $Id: AnnealerCase.scad 60 2022-04-01 06:51:39Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -1181,11 +1181,11 @@ module case_feeder_body_embossed () {
     }
 
   for (x = [-top_mount_x_diff_front / 2, top_mount_x_diff_front / 2]) {
-    translate([case_x / 2 + x - cf_holder_width / 2, case_thickness + top_mount_y_offset - cf_holder_length + cf_holder_width / 2, case_z])
+    translate([cf_mount_x_offset + x - cf_holder_width / 2, case_thickness + top_mount_y_offset - cf_holder_length + cf_holder_width / 2, case_z])
       rounded_bar(cf_holder_length, cf_holder_width, case_thickness);
     
     for (y = [-top_mount_y_diff_front / 2, top_mount_y_diff_front / 2]) {
-      translate([case_x / 2 + x, case_thickness + top_mount_y_offset + y, case_z + case_thickness + m4_nut_height / 2])
+      translate([cf_mount_x_offset + x, case_thickness + top_mount_y_offset + y, case_z + case_thickness + m4_nut_height / 2])
         cylinder(h = m4_head_height, d = m4_head_diameter + case_thickness, center = true);
     }
   }
@@ -1275,7 +1275,7 @@ module case_feeder_body_engraved () {
   for (y = [-top_mount_y_diff_front / 2, top_mount_y_diff_front / 2]) {
     // front
     for (x = [-top_mount_x_diff_front / 2, top_mount_x_diff_front / 2]) {
-      translate([case_x / 2 + x, case_thickness + top_mount_y_offset + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
+      translate([cf_mount_x_offset + x, case_thickness + top_mount_y_offset + y, case_z - case_thickness - ab_height / 2 + m4_nut_height / 2])
         union () {
           m4_nut_hole();
           translate([0, 0, case_thickness * 3.5])
@@ -3005,7 +3005,8 @@ module print_servo_arm () { // name: ServoArm.stl
 }
 
 module print_case_feeder_body () { // name: FeederBody.stl
-  case_feeder_body();
+  translate([-cf_center_x, -cf_center_y, -case_z])
+    case_feeder_body();
 }
 
 module print_case_feeder_slide () { // name: FeederSlide.stl
