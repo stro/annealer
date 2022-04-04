@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 60 2022-04-01 06:51:39Z stro $
+// $Id: AnnealerCase.scad 61 2022-04-04 00:08:37Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -324,6 +324,7 @@ cf_insert_top_clearance = 2.0; // how much the case should stick out
 
 mount_tube_length = 50.0;
 tube_hole_diameter = 15.0;
+narrow_tube_hole_diameter = 10.0;
 tube_wall_thickness = 2.0;
 tube_diameter = tube_hole_diameter + 2 * tube_wall_thickness;
 
@@ -2058,22 +2059,22 @@ module proximity_sensor_mount_embossed () {
     }
 }
 
-module proximity_sensor_mount_engraved () {
+module proximity_sensor_mount_engraved (hole_diameter = tube_hole_diameter) {
   // Top
   translate([0, 0, sensor_mount_height - mount_size / 2])
-    cylinder(h = mount_size, d = tube_hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
+    cylinder(h = mount_size, d = hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
   
   // Middle
   translate([0, 0, sensor_mount_height - mount_size - mount_size / 2])
-    cylinder(h = mount_size, d1 = tube_hole_diameter + 0 * tube_wall_thickness + 2 * drop_connector_gap, d2 = tube_hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
+    cylinder(h = mount_size, d1 = hole_diameter + 2 * drop_connector_gap, d2 = hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
   
   // Bottom
   translate([0, 0, sensor_mount_height / 2 - mount_size / 2])
-    cylinder(h = sensor_mount_height, d = tube_hole_diameter + 2 * drop_connector_gap, center = true);  
+    cylinder(h = sensor_mount_height, d = hole_diameter + 2 * drop_connector_gap, center = true);  
   
   rotate([0, 0, 90])
     translate([0, 0, sensor_mount_height - mount_size / 2])
-      cube([tube_hole_diameter + 4 * tube_wall_thickness + 20, tube_wall_thickness + drop_connector_gap, mount_size], center = true);
+      cube([hole_diameter + 4 * tube_wall_thickness + 20, tube_wall_thickness + drop_connector_gap, mount_size], center = true);
 
   zlist = sensor_low_mounts ? [mount_size / 2, sensor_mount_height - mount_size / 2] : [sensor_mount_height - mount_size / 2];
 
@@ -2091,14 +2092,14 @@ module proximity_sensor_mount_engraved () {
   rotate([0, 0, sensor_angle])
     union () {
       // Main part of the sensor holder
-      translate([(tube_hole_diameter + 4 * tube_wall_thickness) / 2  + sensor_housing_length / 2, 0, sensor_mount_height - 2 * mount_size - sensor_housing_diameter /2])
+      translate([sensor_housing_length + hole_diameter / 2, 0, sensor_mount_height - 2 * mount_size - sensor_housing_diameter /2])
         rotate([0, 90, 0])
-          cylinder(h = sensor_housing_length + 2 * drop_connector_gap, d = sensor_diameter, center = true);
+          cylinder(h = 2 * sensor_housing_length, d = sensor_diameter, center = true);
       
       // Connection to the drop_funnel
-        translate([(tube_hole_diameter + 4 * tube_wall_thickness) / 2  + sensor_housing_length / 2 + ( sensor_housing_length + 2 * drop_connector_gap) / 2 + tube_wall_thickness - (sensor_housing_length + 2 * drop_connector_gap) - 2 * tube_wall_thickness - tube_hole_diameter / 4, 0, sensor_mount_height - 2 * mount_size - sensor_housing_diameter /2])
+        translate([hole_diameter / 4, 0, sensor_mount_height - 2 * mount_size - sensor_housing_diameter /2])
           rotate([0, 90, 0])
-            cylinder(h = 2 * tube_wall_thickness + tube_hole_diameter / 2, d2 = sensor_diameter, d1 = tube_hole_diameter, center = true);
+            cylinder(h = hole_diameter / 2, d2 = sensor_diameter, d1 = hole_diameter, center = true);
         translate([tube_hole_diameter + sensor_hex_offset, 0, sensor_mount_height - 2 * mount_size - sensor_housing_diameter /2])
           rotate([0, 90, 0])
             union () {
@@ -2122,10 +2123,10 @@ module drop_funnel_mount_embossed () {
     }
 }
 
-module drop_funnel_mount_engraved () {
+module drop_funnel_mount_engraved (hole_diameter = tube_hole_diameter) {
   translate([0, 0, drop_funnel_mount_height / 2])
     union () {
-      cylinder(h = drop_funnel_mount_height, d = tube_hole_diameter, center = true);
+      cylinder(h = drop_funnel_mount_height, d1 = tube_hole_diameter, d2 = hole_diameter, center = true);
       for (x = [ - drop_funnel_magnet_offset, drop_funnel_magnet_offset]) {
         translate([x, 0, - drop_funnel_mount_height/2 + (cf_magnet_height + cf_magnet_bottom_height_ext) / 2])
           cylinder(h = cf_magnet_height + cf_magnet_bottom_height_ext, d = cf_magnet_diameter + cf_magnet_bottom_ext, center = true);
@@ -2224,17 +2225,17 @@ module collator_drop_tube () {
   }
 }
 
-module proximity_sensor_mount () {
+module proximity_sensor_mount (hole_diameter = tube_hole_diameter) {
   difference () {
     proximity_sensor_mount_embossed();
-    proximity_sensor_mount_engraved();
+    proximity_sensor_mount_engraved(hole_diameter);
   }
 }
 
-module drop_funnel_mount () {
+module drop_funnel_mount (hole_diameter = tube_hole_diameter) {
   difference () {
     drop_funnel_mount_embossed();
-    drop_funnel_mount_engraved();
+    drop_funnel_mount_engraved(hole_diameter);
   }
 }
 
@@ -2268,12 +2269,12 @@ module tube_mount (z = 15) {
       prism(tube_wall_thickness, 10, 10);
 }
 
-module collator_sensor_mount () {
+module collator_sensor_mount (hole_diameter = tube_hole_diameter) {
   translate([0, 0, drop_funnel_mount_height])
     union () {
-      proximity_sensor_mount();
+      proximity_sensor_mount(hole_diameter);
       translate([0, 0, - drop_funnel_mount_height])
-        drop_funnel_mount();
+        drop_funnel_mount(hole_diameter);
     }
 }
 
@@ -3045,6 +3046,10 @@ module print_collator_drop () { // name: CollatorPlate.stl
 
 module print_collator_sensor_mount() { // name: CollatorSensor.stl
   collator_sensor_mount();
+}
+
+module print_collator_sensor_mount_narrow() { // name: CollatorSensorNarrow.stl
+  collator_sensor_mount(narrow_tube_hole_diameter);
 }
 
 module print_coil_insert() { // name: HighTemp_CoilInsert.stl
