@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 61 2022-04-04 00:08:37Z stro $
+// $Id: AnnealerCase.scad 62 2022-04-04 04:04:54Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -2062,11 +2062,11 @@ module proximity_sensor_mount_embossed () {
 module proximity_sensor_mount_engraved (hole_diameter = tube_hole_diameter) {
   // Top
   translate([0, 0, sensor_mount_height - mount_size / 2])
-    cylinder(h = mount_size, d = hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
+    cylinder(h = mount_size, d = tube_hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
   
   // Middle
   translate([0, 0, sensor_mount_height - mount_size - mount_size / 2])
-    cylinder(h = mount_size, d1 = hole_diameter + 2 * drop_connector_gap, d2 = hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
+    cylinder(h = mount_size, d1 = hole_diameter + 2 * drop_connector_gap, d2 = tube_hole_diameter + 2 * tube_wall_thickness + 2 * drop_connector_gap, center = true);
   
   // Bottom
   translate([0, 0, sensor_mount_height / 2 - mount_size / 2])
@@ -2074,7 +2074,7 @@ module proximity_sensor_mount_engraved (hole_diameter = tube_hole_diameter) {
   
   rotate([0, 0, 90])
     translate([0, 0, sensor_mount_height - mount_size / 2])
-      cube([hole_diameter + 4 * tube_wall_thickness + 20, tube_wall_thickness + drop_connector_gap, mount_size], center = true);
+      cube([tube_hole_diameter + 4 * tube_wall_thickness + 20, tube_wall_thickness + drop_connector_gap, mount_size], center = true);
 
   zlist = sensor_low_mounts ? [mount_size / 2, sensor_mount_height - mount_size / 2] : [sensor_mount_height - mount_size / 2];
 
