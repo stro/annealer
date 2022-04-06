@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 62 2022-04-04 04:04:54Z stro $
+// $Id: AnnealerCase.scad 63 2022-04-06 06:42:24Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -327,6 +327,7 @@ tube_hole_diameter = 15.0;
 narrow_tube_hole_diameter = 10.0;
 tube_wall_thickness = 2.0;
 tube_diameter = tube_hole_diameter + 2 * tube_wall_thickness;
+tube_oval_diff = 3.0;
 
 drop_connector_gap = 0.2;
 
@@ -374,7 +375,7 @@ drop_funnel_label_depth = 0.4;
 
 drop_funnel_side_magnet_height = 120;
 
-collator_drop_tube_adjustment = -57; // Probably can be calculated
+collator_drop_tube_adjustment = -71; // Probably can be calculated
 
 letter_size_margin = 4.0;
 
@@ -1910,7 +1911,7 @@ module power_connector_engraved () {
 
 // COLLATOR DROP
 
-module collator_drop () {
+module collator_drop (hole_diameter = tube_hole_diameter) {
   // Plate
   collator_drop_plate();
   
@@ -1918,11 +1919,11 @@ module collator_drop () {
   difference () {
     translate([24.5, 38, 10 * sin(30)])
       rotate([0, 30, 0])
-        collator_drop_tube();
+        collator_drop_tube(hole_diameter);
     union () {
       collator_drop_plate_embossed();
       collator_drop_plate_engraved();
-      collator_drop_tube_drop_funnel();
+      collator_drop_tube_drop_funnel(hole_diameter);
     }
   }
 }
@@ -1944,10 +1945,10 @@ module collator_drop_plate_engraved () {
       cylinder(h = 40, d = 3.5, center = true);
   translate([13, 17.3, 4])
     rotate([0, -90, 0])
-      m3_hole_and_drop(7);
+      m3_hole_and_drop(10);
   
-  translate([20, 0, 0])
-    cube([19.2, 54.3, 5]);
+  translate([20, -10, 0])
+    cube([19.2, 64.3, 5]);
   
   for (x = [20, 39.2]) {
     translate([x, 0, 0.7])
@@ -1968,7 +1969,7 @@ module collator_drop_tube_embossed () {
 
   translate([0, 0, 0])
     hull () {
-      translate([0, 0, 30])
+      translate([0, 0, 39])
         cylinder(h = 1, d = tube_diameter, center = true);
       translate([0, 0, -2])
         cube([25, 60, 1], center = true);
@@ -1978,21 +1979,33 @@ module collator_drop_tube_embossed () {
   tube_mount(mount_tube_length - 5);
 }
 
-module collator_drop_tube_engraved () {
+module collator_drop_tube_engraved (hole_diameter = tube_hole_diameter) {
   translate([0, 0, mount_tube_length / 2 - collator_drop_tube_adjustment])
-    cylinder(h = mount_tube_length - collator_drop_tube_adjustment, d = tube_hole_diameter, center = true);
+    cylinder(h = mount_tube_length - collator_drop_tube_adjustment, d = hole_diameter, center = true);
 }
 
-module collator_drop_tube_drop_funnel () {
+module collator_drop_tube_drop_funnel (hole_diameter = tube_hole_diameter) {
   translate([0, 0, 15])
-    hull () {
+    union () {
+      hull () {
+        translate([26, 38, 20 * sin(30)])
+          rotate([0, 30, 0])
+            translate([10 * cos(30), 0, 20])
+              resize([hole_diameter, hole_diameter + tube_oval_diff, 1])
+                cylinder(h = 1, d = hole_diameter, center = true);
+        translate([20, 20.3, -5])
+          cube([19.2, 34.0, 1]);
+      };
       translate([26, 38, 20 * sin(30)])
         rotate([0, 30, 0])
-          translate([10 * cos(30), 0, 10])
-          cylinder(h = 1, d = tube_hole_diameter, center = true);
-      translate([20, 20.3, -5])
-        cube([19.2, 34.0, 1]);
-    };  
+          translate([10 * cos(30), 0, 20])
+            hull () {
+              resize([hole_diameter, hole_diameter + tube_oval_diff, 1])
+                cylinder(h = 1, d = hole_diameter, center = true);
+              translate([0, 0, 5])
+                cylinder(h = 1, d = hole_diameter, center = true);
+            }
+    }
 }
 
 module proximity_sensor_mount_embossed () {
@@ -2218,10 +2231,10 @@ module collator_drop_plate () {
   }
 }
 
-module collator_drop_tube () {
+module collator_drop_tube (hole_diameter) {
   difference () {
     collator_drop_tube_embossed();
-    collator_drop_tube_engraved();
+    collator_drop_tube_engraved(hole_diameter);
   }
 }
 
