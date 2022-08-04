@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 64 2022-08-04 01:06:57Z stro $
+// $Id: AnnealerCase.scad 65 2022-08-04 01:51:26Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -175,7 +175,7 @@ pump_hole_y = 38.0;
 
 insert_mount_x_offset = 0;
 insert_mount_y_offset = 50;
-insert_mount_y_offset_top = 60;
+insert_mount_y_offset_top = 80;
 insert_mount_z_offset = 30;
 insert_mount_z_rib = 5;
 
