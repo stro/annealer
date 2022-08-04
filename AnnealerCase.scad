@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 63 2022-04-06 06:42:24Z stro $
+// $Id: AnnealerCase.scad 64 2022-08-04 01:06:57Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -392,11 +392,12 @@ ch_insert_back_letter_size = 10.0;
 ch_top_thickness = 5.0;
 ch_top_width = 50.0;
 ch_top_depth = 80.0;
+ch_top_depth_ext = 10.0;
 
 ch_insert_diff = 5.0;
 ch_bottom_slope = 2.0;
 
-ch_mounts = [[0, -18.5], [-18.5, 33.5], [18.5, 18.0]];
+ch_mounts = [[0, -18.5 - ch_top_depth_ext], [-18.5, 43.0], [18.5, 43.0]];
 
 ch_height_discard = 1.0; // If it's this height of less, discard the insert
 ch_height_minimum = 3.0; // If insert is between "discard" and "minimum", use the minimum
@@ -512,6 +513,17 @@ m2_5_diameter = 2.6;
 
 ch_case_difference = servo_mount_top_clearance + ch_top_thickness + coil_height / 2 + ch_insert_diff;
 
+// collator plate and drop funnel
+cp_width = 74.6;
+cp_depth = 49.5;
+cp_height = 10.0;
+
+cp_center_x = -29.6;
+cp_center_y = -37.3;
+cp_center_z = -cp_height;
+
+cp_notch_z = 3.65;
+cp_notch_size = 2.65;
 
 button_caption = ["START", "MODE", "TIME"]; // from bottom to top
 
@@ -1494,14 +1506,14 @@ module case_feeder_insert_engraved_magnet_holes (diameter = cf_magnet_diameter, 
 module case_holder_top_embossed () {
   translate([cf_center_x - ch_top_width /2, (cf_center_y )/ 2, ch_top_z  - ch_top_thickness / 2])
     cube([ch_top_width, -cf_center_y / 2 , ch_top_thickness]);
-    
   translate([cf_center_x, cf_center_y, ch_top_z])
     union () {
-      translate([0, ch_top_depth / 4, 0])
-        cube([ch_top_width, ch_top_depth / 2, ch_top_thickness], center = true);
-      intersection () {
-        cube([ch_top_width, ch_top_depth, ch_top_thickness], center = true);
-        cylinder(h = ch_top_thickness, d = ch_top_width, center = true);
+      translate([0, ch_top_depth / 4 - ch_top_depth_ext / 2, 0])
+        cube([ch_top_width + 2 * case_thickness, ch_top_depth / 2 + ch_top_depth_ext, ch_top_thickness], center = true);
+      translate([0, -ch_top_depth_ext, 0])
+        intersection () {
+          cube([ch_top_width + 2 * case_thickness, ch_top_depth, ch_top_thickness], center = true);
+          cylinder(h = ch_top_thickness, d = ch_top_width + 2 * case_thickness, center = true);
       }
     }
 }
@@ -1526,9 +1538,10 @@ module case_holder_insert_embossed ( case_width, case_height, caliber ) {
   translate([0, 0, -case_height / 2])
     union () {
       translate([0, ch_top_depth / 4, 0])
-        cube([ch_top_width, ch_top_depth / 2, case_height], center = true);
+        cube([ch_top_width, ch_top_depth / 2 + 2 * ch_top_depth_ext, case_height], center = true);
         intersection () {
-          cube([ch_top_width, ch_top_depth, case_height], center = true);
+          cube([ch_top_width, ch_top_depth + ch_top_depth_ext, case_height], center = true);
+          translate([0, - ch_top_depth_ext, 0])
           cylinder(h = case_height, d = ch_top_width, center = true);
         };
       }
@@ -1554,18 +1567,16 @@ module case_holder_insert_engraved ( case_width, case_height, caliber ) {
       // Text: side
       translate([ch_top_width / 2 - ch_insert_letter_depth, ch_top_depth / 4, 0])
         rotate([90, 0, 90])
-          resize([ch_top_depth / 2, 0, 0])
+          resize([ch_top_depth / 2 + 2 * ch_top_depth_ext, 0, 0])
             linear_extrude(ch_insert_letter_depth)
               text(str(caliber, " "), size = min(ch_insert_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin), case_height - filament_wall * 2), halign = "center", valign = "center", font = "Anton");
       
       // Text: back
-      translate([0, ch_top_depth / 2 - ch_insert_letter_depth, 0])
+      translate([0, ch_top_depth / 2 + ch_top_depth_ext - ch_insert_letter_depth, 0])
         rotate([90, 0, 180])
           resize([ch_top_width - case_thickness, 0, 0])
             linear_extrude(ch_insert_letter_depth)
               text(str(caliber, " "), size = min(ch_insert_back_letter_size, max(case_height - case_thickness, ch_insert_letter_size - letter_size_margin), case_height - filament_wall * 2), halign = "center", valign = "center", font = "Anton");
-   
-
     }
   // A hole for servo arm screw
   translate([0, servo_arm_length, (cf_magnet_diameter + cf_magnet_bottom_ext) / 2 - case_height])
@@ -1577,12 +1588,15 @@ module case_holder_insert_engraved ( case_width, case_height, caliber ) {
 module servo_holder_embossed () {
   translate([cf_center_x, cf_center_y, servo_z - servo_arm_thickness - servo_hole_height - servo_mount_height / 2])
     union () {
-      translate([0, ch_top_depth / 4, 0])
-        cube([ch_top_width, ch_top_depth / 2, servo_mount_height], center = true);
-      intersection () {
-        cube([ch_top_width, ch_top_depth, servo_mount_height], center = true);
-        cylinder(h = servo_mount_height, d = ch_top_width, center = true);
-      };
+      translate([0, ch_top_depth / 4 - ch_top_depth_ext / 2, 0])
+        cube([ch_top_width, ch_top_depth / 2 + ch_top_depth_ext, servo_mount_height], center = true);
+      translate([0, ch_top_depth / 2 + ch_top_depth_ext / 2, 0])
+        cube([ch_top_width, ch_top_depth_ext, servo_mount_height], center = true);
+      translate([0, -ch_top_depth_ext, 0])
+        intersection () {
+          cube([ch_top_width, ch_top_depth + ch_top_depth_ext, servo_mount_height], center = true);
+          cylinder(h = servo_mount_height, d = ch_top_width, center = true);
+        };
     }
 
   translate([cf_center_x, cf_center_y, servo_z + servo_mount_top_clearance])
@@ -1631,22 +1645,30 @@ module cartridge_drop_embossed () {
   translate([cf_center_x, cf_center_y, servo_z - servo_mount_height - servo_arm_thickness - servo_hole_height - servo_mount_top_clearance - case_thickness / 2])
     union () {
       hull () {
+        cylinder(h = case_thickness, d = cf_drop_diameter + ch_drop_slope + 2 * cartridge_drop_thickness, center = true); 
         translate([ch_mounts[0][0], ch_mounts[0][1], 0])
           cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
-        translate([ch_mounts[2][0], ch_mounts[2][1], 0])
+        translate([ch_mounts[1][0], 0, 0])
           cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
-        // inverted by x axis
-        translate([- ch_mounts[2][0], ch_mounts[2][1], 0])
-          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true); 
+        translate([ch_mounts[1][0], ch_mounts[1][1] / 2, 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
       }
+
       hull () {
         translate([ch_mounts[1][0], ch_mounts[1][1], 0])
           cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
-        // inverted by x axis
-        translate([- ch_mounts[2][0], ch_mounts[2][1], 0])
-          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true); 
+        translate([ch_mounts[1][0], 0, 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
       }
-      translate([0, 0, - cartridge_drop_length / 2])
+
+      hull () {
+        translate([ch_mounts[1][0], ch_mounts[1][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
+        translate([ch_mounts[2][0], ch_mounts[2][1], 0])
+          cylinder(h = case_thickness, d = cf_magnet_diameter + 2 * cartridge_drop_thickness, center = true);
+      }
+      
+      translate([0, 0, - cartridge_drop_length / 2 - case_thickness / 2])
         cylinder(h = cartridge_drop_length, d2 = cf_drop_diameter + ch_drop_slope + 2 * cartridge_drop_thickness, d1 = cf_drop_diameter + 2 * cartridge_drop_thickness, center = true); 
     }
 }
@@ -1911,55 +1933,59 @@ module power_connector_engraved () {
 
 // COLLATOR DROP
 
-module collator_drop (hole_diameter = tube_hole_diameter) {
+module collator_drop (hole_diameter = tube_hole_diameter, angle = 30) {
   // Plate
   collator_drop_plate();
   
   // Tube
   difference () {
-    translate([24.5, 38, 10 * sin(30)])
-      rotate([0, 30, 0])
+    translate([24.5, 38, 10 * sin(angle)])
+      rotate([0, angle, 0])
         collator_drop_tube(hole_diameter);
     union () {
       collator_drop_plate_embossed();
       collator_drop_plate_engraved();
-      collator_drop_tube_drop_funnel(hole_diameter);
+      collator_drop_tube_drop_funnel(hole_diameter, angle);
     }
   }
 }
+//color("red") collator_drop_tube_drop_funnel(angle = 30);
 
+//color("green") translate([0, 40, 0]) collator_drop_tube_drop_funnel(angle = 0);
+//color("blue") translate([0, 80, 0]) collator_drop_tube_drop_funnel(angle = 45);
+//color("red") translate([0, 120, 0]) collator_drop_tube_drop_funnel(angle = 30);
 module collator_drop_plate_embossed () {
-  translate([0, 0, 0])
-    cube([49.5, 74.6, 10.0]);
+  translate([cp_center_x, cp_center_y, cp_center_z])
+    cube([cp_depth, cp_width, cp_height]);
 
-  for (y = [0, 74.6]) {
-    translate([0, y, 3.65])
+  for (y = [0, cp_width]) {
+    translate([cp_center_x, cp_center_y + y, cp_center_z + cp_notch_z])
       rotate([45, 0, 0])
-        cube([49.5, 2.65, 2.65]);
+        cube([cp_depth, cp_notch_size, cp_notch_size]);
   }
 }
 
 module collator_drop_plate_engraved () {
-  translate([10, 17.3, 3.3])
+  translate([cp_center_x + 10, cp_center_y + 17.3, cp_center_z + 3.3])
     rotate([0, 90, 0]) 
       cylinder(h = 40, d = 3.5, center = true);
-  translate([13, 17.3, 4])
+  translate([cp_center_x + 13, cp_center_y + 17.3, cp_center_z + 4])
     rotate([0, -90, 0])
       m3_hole_and_drop(10);
   
-  translate([20, -10, 0])
+  translate([cp_center_x + 20, cp_center_y -10, cp_center_z])
     cube([19.2, 64.3, 5]);
   
   for (x = [20, 39.2]) {
-    translate([x, 0, 0.7])
+    translate([cp_center_x + x, cp_center_y, cp_center_z + 0.7])
       rotate([45, 0, 90])
         cube([54.3, 1.5, 1.5]);
   }
 
-  translate([20, 20.3, 0])
-    cube([19.2, 34.0, 11]);
+  translate([0, 0, 0])
+    cube([19.2, 34.0, 11], center = true);
   
-  translate([-100, -100, -40])
+  translate([cp_center_x - 100, cp_center_y - 100, cp_center_z - 40])
     cube([200, 200, 40]);
 }
 
@@ -1976,7 +2002,8 @@ module collator_drop_tube_embossed () {
     };
     
   // Mount
-  tube_mount(mount_tube_length - 5);
+  translate([0, 0, 0])
+    tube_mount(mount_tube_length - 5);
 }
 
 module collator_drop_tube_engraved (hole_diameter = tube_hole_diameter) {
@@ -1984,27 +2011,29 @@ module collator_drop_tube_engraved (hole_diameter = tube_hole_diameter) {
     cylinder(h = mount_tube_length - collator_drop_tube_adjustment, d = hole_diameter, center = true);
 }
 
-module collator_drop_tube_drop_funnel (hole_diameter = tube_hole_diameter) {
+module collator_drop_tube_drop_funnel (hole_diameter = tube_hole_diameter, angle = 30) {
   translate([0, 0, 15])
     union () {
       hull () {
-        translate([26, 38, 20 * sin(30)])
-          rotate([0, 30, 0])
-            translate([10 * cos(30), 0, 20])
-              resize([hole_diameter, hole_diameter + tube_oval_diff, 1])
-                cylinder(h = 1, d = hole_diameter, center = true);
+        translate([30 * cos(angle), 38, 20 * sin(angle)])
+          rotate([0, angle, 0])
+            translate([10 * cos(angle), 0, 20])
+//              resize([hole_diameter, hole_diameter + tube_oval_diff, 1])
+                cylinder(h = 0.2, d = hole_diameter, center = true);
         translate([20, 20.3, -5])
           cube([19.2, 34.0, 1]);
       };
-      translate([26, 38, 20 * sin(30)])
-        rotate([0, 30, 0])
-          translate([10 * cos(30), 0, 20])
+      if (0) {
+      translate([26, 38, 20 * sin(angle)])
+        rotate([0, angle, 0])
+          translate([10 * cos(angle), 0, 20])
             hull () {
               resize([hole_diameter, hole_diameter + tube_oval_diff, 1])
                 cylinder(h = 1, d = hole_diameter, center = true);
               translate([0, 0, 5])
                 cylinder(h = 1, d = hole_diameter, center = true);
             }
+      }
     }
 }
 
@@ -3069,7 +3098,7 @@ module print_coil_insert() { // name: HighTemp_CoilInsert.stl
   coil_insert();
 }
 
-module print_cartridge_drop() { // name: HighTemp_CartridgeDrop.stl
+module print_cartridge_drop() { // name: CartridgeDrop.stl
   rotate([180, 0, 0])
     cartridge_drop();
 }
@@ -3097,4 +3126,36 @@ module print_case_holder_insert_for_caliber ( cal ) { // name: HolderInsert-%s.s
 module print_drop_funnel_for_caliber ( cal ) { // name: Funnel-%s.stl
   rotate([180, 0, 180])
     drop_funnel(cal);
+}
+
+module vq_collator_30 () {
+  collator_mount_top();
+  translate([collator_stand_x, collator_stand_y - 54, collator_stand_z + 39.5])
+    rotate([0, -30, -90])
+     import("collator_parts/renders/CollatorBodySmall.stl");
+
+  translate([collator_stand_x - cp_width / 2, collator_stand_y - 145, collator_stand_z + 104])
+    rotate([-30, 0, 0])
+      rotate([180, 0, 90])
+        collator_drop();
+
+  translate([cf_center_x, - cf_nema_offset_y + 17, case_z + 258.2])
+    rotate([0, 0, -90])
+      collator_sensor_mount();
+}
+
+module vq_collator_45 () {
+  collator_mount_top();
+  translate([collator_stand_x, collator_stand_y - 54, collator_stand_z + 39.5])
+    rotate([0, -45, -90])
+     import("collator_parts/renders/CollatorBodySmall.stl");
+
+  translate([collator_stand_x - cp_width / 2, collator_stand_y - 145, collator_stand_z + 104])
+    rotate([-45, 0, 0])
+      rotate([180, 0, 90])
+        collator_drop(angle = 45);
+
+  translate([cf_center_x, - cf_nema_offset_y + 17, case_z + 258.2])
+    rotate([0, 0, -90])
+      collator_sensor_mount();
 }
