@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 65 2022-08-04 01:51:26Z stro $
+// $Id: AnnealerCase.scad 66 2022-08-06 03:49:02Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -466,19 +466,21 @@ collator_drop_z = collator_drop_height + case_x + cf_wall_height;
 collator_stand_x = cf_center_x;
 collator_stand_y = 129.0;
 collator_stand_z = 537.0;
+collator_stand_width = 100.0;
 collator_stand_height = 100.0;
 collator_stand_diameter = 30.0;
 collator_stand_center_z = -50.0;
 collator_stand_slope_diameter = 50.0;
+collator_stand_mark_size = 3.0; // "R" rear mark font size
 
 collator_stand_top_height = 50.0;
 collator_stand_top_overlap = 0.0; // to increase the overlap part, probably not necessary
 collator_stand_overlap_thickness = 5.0;
 
-top_mount_x_diff_rear = 40.0;
+top_mount_x_diff_rear = 60.0;
 top_mount_x_offset_rear = cf_center_x - case_x / 2;
 top_mount_y_diff_rear = 30.0;
-top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset + 15.0;
+top_mount_y_offset_rear = - cf_center_y - collator_mount_depth * sin(collator_angle) +collator_mount_offset + 18.0;
 
 power_cover_thickness = 1.0;
 power_cover_width = 46.4;
@@ -816,8 +818,12 @@ module front_wall_left_engraved () {
         ch_mount_magnet_holes();
   }
 
+  servo_connect_hole();
+
   case_edge_engraved();
 }
+
+// FRONT WALL CENTER
 
 module front_wall_center_embossed () {
   // front wall, bottom part
@@ -853,16 +859,10 @@ module front_wall_center_embossed () {
   case_holder_top();
 }
 
-// FRONT WALL CENTER
-
 module front_wall_center_engraved () {
-  // Servo connect hole
-  translate([cf_center_x, 0, case_thickness + servo_connect_z])
-    rotate([90, 0, 0])
-      cylinder(h = 2 * case_thickness, d = servo_connect_diameter, center = true);
-
   // Covers all walls
- 
+
+  servo_connect_hole();
   case_feeder_drop();
   
   zvs_mount_engraved();
@@ -1753,12 +1753,12 @@ module collator_mount_embossed () {
   // Stand base
   translate([collator_stand_x, collator_stand_y + collator_mount_width * sin(collator_angle), case_z + case_thickness - collator_stand_bottom_height / 2])
     union () {
-      resize([collator_mount_width, collator_stand_depth + 2 * collator_stand_bottom_extra, collator_stand_bottom_height])
-      cylinder(d = collator_mount_width, h = collator_stand_bottom_height, center = true);
+      resize([collator_stand_width, collator_stand_depth + 2 * collator_stand_bottom_extra, collator_stand_bottom_height])
+      cylinder(d = collator_stand_width, h = collator_stand_bottom_height, center = true);
 
       // Stand base sphere
       translate([0, 0, collator_stand_bottom_height / 2])
-        resize([collator_mount_width, collator_stand_depth + 2 * collator_stand_bottom_extra, collator_stand_bottom_height * 2])
+        resize([collator_stand_width, collator_stand_depth + 2 * collator_stand_bottom_extra, collator_stand_bottom_height * 2])
         sphere(d = collator_mount_width);
       
       // 45 degree slope
@@ -1778,6 +1778,12 @@ module collator_mount_engraved () {
             translate([0, 0, -ab_height]) m4_hole_and_drop(ab_height);
           };
       };
+
+  // Rear label
+  translate([collator_stand_x, collator_stand_y + collator_mount_width * sin(collator_angle) +   collator_stand_depth + collator_stand_bottom_extra /2, case_z + case_thickness - collator_stand_bottom_height / 2 - collator_stand_mark_size / 2])
+    rotate([90, 0, 180])
+      linear_extrude(filament_wall, center = true)
+        text("R", size = collator_stand_mark_size, halign = "center");
 
   collator_mount_holes_engraved();
 }
@@ -1949,11 +1955,7 @@ module collator_drop (hole_diameter = tube_hole_diameter, angle = 30) {
     }
   }
 }
-//color("red") collator_drop_tube_drop_funnel(angle = 30);
 
-//color("green") translate([0, 40, 0]) collator_drop_tube_drop_funnel(angle = 0);
-//color("blue") translate([0, 80, 0]) collator_drop_tube_drop_funnel(angle = 45);
-//color("red") translate([0, 120, 0]) collator_drop_tube_drop_funnel(angle = 30);
 module collator_drop_plate_embossed () {
   translate([cp_center_x, cp_center_y, cp_center_z])
     cube([cp_depth, cp_width, cp_height]);
@@ -2562,6 +2564,13 @@ module power_cover () {
 }
 
 // MISCELLANEOUS PARTS
+
+module servo_connect_hole () {
+  // Servo connect hole; goes through left and center parts
+  translate([front_wall_left_part_width, 0, case_thickness + servo_connect_z])
+    rotate([90, 0, 0])
+      cylinder(h = 2 * case_thickness, d = servo_connect_diameter, center = true);
+}
 
 module vent_hole () {
   translate([case_thickness / 2, case_y - case_thickness -power_vent_y - ab_depth, case_thickness + power_vent_z])
