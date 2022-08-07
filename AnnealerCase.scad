@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 67 2022-08-07 19:27:55Z stro $
+// $Id: AnnealerCase.scad 68 2022-08-07 22:16:48Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -277,8 +277,8 @@ assert(cf_insert_diameter >= cf_base_diameter + 2 * cf_drop_diameter);
 cf_magnet_offset = 16.0;
 cf_magnet_diameter = 8.2;
 cf_magnet_height = 3.2;
-cf_magnet_bottom_ext = 0.2;
-cf_magnet_bottom_height_ext = 0.2;
+cf_magnet_bottom_ext = 0.4;
+cf_magnet_bottom_height_ext = 0.4;
 
 cf_engrave_dimensions = false;
 cf_text_depth = 0.4;
@@ -1521,12 +1521,12 @@ module case_holder_top_engraved () {
     union () {
       translate([0, 0, ch_top_thickness / 2])
         cylinder(h = ch_top_thickness, d2 = cf_drop_diameter + ch_drop_slope, d1 = cf_drop_diameter, center = true);
-      translate([0, 0, (cf_magnet_height + cf_magnet_bottom_height_ext) ])
-        ch_mount_magnet_holes(diameter = cf_magnet_diameter + cf_magnet_bottom_ext, height = cf_magnet_height + 2 * cf_magnet_bottom_height_ext);
+      translate([0, 0, cf_magnet_height])
+        ch_mount_magnet_holes(diameter = cf_magnet_diameter, height = cf_magnet_height);
 
       // A hole for servo arm screw
-      translate([0, servo_arm_length, (cf_magnet_height + cf_magnet_bottom_height_ext) / 2])
-        cylinder(h = (cf_magnet_height + cf_magnet_bottom_height_ext), d = cf_magnet_diameter + cf_magnet_bottom_ext, center = true);
+      translate([0, servo_arm_length, cf_magnet_height / 2])
+        cylinder(h = cf_magnet_height, d = cf_magnet_diameter / 2, center = true);
     }
 }
 
