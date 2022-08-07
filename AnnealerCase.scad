@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 66 2022-08-06 03:49:02Z stro $
+// $Id: AnnealerCase.scad 67 2022-08-07 19:27:55Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -817,8 +817,6 @@ module front_wall_left_engraved () {
       rotate([0, 0, 180])
         ch_mount_magnet_holes();
   }
-
-  servo_connect_hole();
 
   case_edge_engraved();
 }
@@ -2566,10 +2564,14 @@ module power_cover () {
 // MISCELLANEOUS PARTS
 
 module servo_connect_hole () {
-  // Servo connect hole; goes through left and center parts
-  translate([front_wall_left_part_width, 0, case_thickness + servo_connect_z])
-    rotate([90, 0, 0])
-      cylinder(h = 2 * case_thickness, d = servo_connect_diameter, center = true);
+  // Servo connect hole; goes on the left edge of the center part
+  translate([front_wall_left_part_width + servo_connect_diameter / 2, 0, case_thickness + servo_connect_z])
+    union () {
+      rotate([90, 0, 0])
+        cylinder(h = 2 * case_thickness, d = servo_connect_diameter, center = true);
+      translate([-servo_connect_diameter / 4, 0, 0])
+        cube([servo_connect_diameter / 2, servo_connect_diameter, 2 * case_thickness], center = true);
+    }
 }
 
 module vent_hole () {
