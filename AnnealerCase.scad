@@ -1,4 +1,4 @@
-// $Id: AnnealerCase.scad 68 2022-08-07 22:16:48Z stro $
+// $Id: AnnealerCase.scad 70 2022-08-09 07:15:39Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -399,7 +399,7 @@ ch_bottom_slope = 2.0;
 
 ch_mounts = [[0, -18.5 - ch_top_depth_ext], [-18.5, 43.0], [18.5, 43.0]];
 
-ch_height_discard = 1.0; // If it's this height of less, discard the insert
+ch_height_discard = 2.0; // If it's this height of less, discard the insert
 ch_height_minimum = 3.0; // If insert is between "discard" and "minimum", use the minimum
 ch_single_magnet_minimum = 6.0; // Use one magnet hole if it's less than this height
 
@@ -2488,14 +2488,23 @@ module case_holder_insert ( caliber ) {
   width_data = caliber_data(caliber);
  
   case_height = width_data[1] - ch_case_difference - width_data[2];
-  
   calc_height = case_height <= ch_height_discard ? 0 : case_height > ch_height_minimum ? case_height: ch_height_minimum;
 
-  translate([cf_center_x, cf_center_y, ch_top_z - ch_top_thickness])
-    difference () {
-      case_holder_insert_embossed(width_data[0], calc_height, caliber);
-      case_holder_insert_engraved(width_data[0], calc_height, caliber);
-    }
+  if (calc_height) {
+    translate([cf_center_x, cf_center_y, ch_top_z - ch_top_thickness])
+      union () {
+        difference () {
+          case_holder_insert_embossed(width_data[0], calc_height, caliber);
+          case_holder_insert_engraved(width_data[0], calc_height, caliber);
+        }
+
+        translate([0, 0, -filament_wall / 2 -(min(calc_height - 1.5 * filament_wall, cf_magnet_height))])
+          resize([0, 0, filament_wall])
+            ch_mount_magnet_holes();
+      }
+  } else {
+    echo(str("Discarded generation; insert height is less than the threshold: ", case_height, " < ", ch_height_discard));
+  }
 }
 
 module collator_angled_mount () {
