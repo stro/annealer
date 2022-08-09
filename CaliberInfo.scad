@@ -1,4 +1,4 @@
-// $Id: CaliberInfo.scad 69 2022-08-09 06:38:38Z stro $
+// $Id: CaliberInfo.scad 70 2022-08-09 07:15:39Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -28,12 +28,12 @@ function caliber_data ( cal ) =
   // Second number: case length (mm), rounded down
   // Third number: distance to the neck (mm)
      
-  cal == ".22 Hornet"             ? [ 9.0, 35.0,  9.8 ] : 
+  cal == ".22 Hornet"             ? [ 9.0, 35.0,  9.8 ] : // No holder
   cal == ".223 Remington"         ? [11.0, 44.0,  8.4 ] :
   cal == ".243 Winchester"        ? [13.0, 51.0, 12.7 ] :
   cal == ".270 Winchester"        ? [13.0, 62.0, 14.7 ] :
   cal == ".30 Herrett"            ? [14.0, 40.0,  3.4 ] :
-  cal == ".300 AAC Blackout"      ? [11.0, 34.0,  6.4 ] :
+  cal == ".300 AAC Blackout"      ? [11.0, 34.0,  6.4 ] : // No holder
   cal == ".30-30 Winchester"      ? [14.0, 51.0, 14.5 ] :
   cal == ".308 Winchester"        ? [13.0, 51.0, 11.2 ] :
   cal == ".30-06 Springfield"     ? [13.0, 63.0, 13.2 ] :
