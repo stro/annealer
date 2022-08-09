@@ -1,4 +1,4 @@
-// $Id: CaliberInfo.scad 58 2022-03-31 06:54:05Z stro $
+// $Id: CaliberInfo.scad 69 2022-08-09 06:38:38Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -28,6 +28,7 @@ function caliber_data ( cal ) =
   // Second number: case length (mm), rounded down
   // Third number: distance to the neck (mm)
      
+  cal == ".22 Hornet"             ? [ 9.0, 35.0,  9.8 ] : 
   cal == ".223 Remington"         ? [11.0, 44.0,  8.4 ] :
   cal == ".243 Winchester"        ? [13.0, 51.0, 12.7 ] :
   cal == ".270 Winchester"        ? [13.0, 62.0, 14.7 ] :
