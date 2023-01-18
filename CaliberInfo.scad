@@ -1,4 +1,4 @@
-// $Id: CaliberInfo.scad 71 2022-08-10 01:56:43Z stro $
+// $Id: CaliberInfo.scad 73 2023-01-18 03:15:16Z stro $
 /*
  * Copyright (c) 2022 sttek.com <https://sttek.com>
  *
@@ -40,6 +40,7 @@ function caliber_data ( cal ) =
   cal == ".303 British"           ? [15.0, 55.0, 10.0 ] :
   cal == "6.5 PRC"                ? [14.0, 51.0, 11.7 ] :
   cal == "7-30 Waters"            ? [14.0, 52.0, 11.4 ] :
+  cal == "7.62×39mmR"             ? [13.0, 40.0,  5.7 ] :
   cal == "7.62×54mmR"             ? [15.0, 52.0, 13.7 ] :
   cal == "8×57mm"                 ? [13.0, 55.0, 10.8 ] :
   cal == ".338 Lapua Magnum"      ? [15.0, 69.0, 14.3 ] :
